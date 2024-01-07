@@ -6,6 +6,9 @@ Todo:
 MAIN:
 exit screen
 dark mode (local)
+readme
+github
+paper
 
 
 
@@ -19,14 +22,13 @@ GOL:
 
 PL:
 input screen (matrix!!!)
+input handling
 mystery box
 
 
 
 SMOOTHLIFE:
-mouse draw regions
-input screen
-r to fill grid
+input handling
 mystery box
 '''
 

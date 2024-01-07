@@ -104,6 +104,11 @@ class SL(Window):
     survival_range = (0.267, 0.445) # survival
     sigmoid_widths = (0.028, 0.147) # smoothstep
     
+    # RGB channels
+    red = True
+    green = True
+    blue = True
+    
     
     
     def __init__(self, size: int, outer_radius: float, sigmode: int, sigtype: int, mixtype: int, stepmode: int, dt: float, fps_cap: int) -> None:
@@ -161,7 +166,7 @@ class SL(Window):
         B1, B2 = self.birth_range
         D1, D2 = self.survival_range
         
-        # determine next state of cell for every cell in the grid
+        # determine next state for every "pixel" in the grid
         if self.sigmode == 1:
             b_thresh = self.sigmoid_ab(n, B1, B2)
             d_thresh = self.sigmoid_ab(n, D1, D2)
@@ -202,7 +207,7 @@ class SL(Window):
             
         
         
-        # clip state of every cell between 0 and 1
+        # clip state of every pixel between 0 and 1
         nextgrid = np.clip(nextgrid, 0, 1)
         
         return nextgrid
@@ -227,28 +232,6 @@ class SL(Window):
         
         return grid
     
-
-    
-    def random_grid(self):
-        
-        # create grid
-        grid = np.zeros((self.grid_height, self.grid_width))
-        
-        # determine how many squares to make (dependent on size and outer radius)
-        count = int(self.grid_width * self.grid_height / ((self.ra * 2) ** 2))
-        
-        for _ in range(count):
-            radius = int(self.ra)
-            
-            # get random cell in grid
-            row = np.random.randint(0, self.grid_height - radius)
-            col = np.random.randint(0, self.grid_width - radius)
-            
-            # create square at that cell with size of outer radius
-            grid[row : row + radius, col : col + radius] = 1
-        
-        return grid
-    
     
     
     def fill_rnd(self, grid):
@@ -263,10 +246,20 @@ class SL(Window):
             
             grid[row : row + radius, col : col + radius] = 1
         
-        return grid
-        
         
     
+    def draw_cell(self, grid):
+        
+        # get pixel at mouse position
+        pos = pg.mouse.get_pos()
+        row = pos[1] // self.size
+        col = pos[0] // self.size
+        
+        # get radius of cell
+        radius = int(self.ra)
+        
+        grid[row : row + radius, col : col + radius] = 1
+        
     
     
     def draw_grid(self, grid):
@@ -274,9 +267,12 @@ class SL(Window):
         # loop through every "pixel" in grid
         for row, col in np.ndindex(grid.shape):
             
-            # determine brightness and draw pixel
+            # determine brightness and apply to rgb channels
             a = 255 * grid[row, col]
-            pg.draw.rect(self.screen, (a,a,a), (col * self.size,
+            colour = (a * self.red, a * self.green, a * self.blue)
+            
+            # draw pixel
+            pg.draw.rect(self.screen, colour, (col * self.size,
                                                 row * self.size,
                                                 self.size,
                                                 self.size))
@@ -313,19 +309,14 @@ class SL(Window):
                     
                     # fill grid with random cells (R)
                     elif event.key == pg.K_r:
-                        grid = self.fill_rnd(grid)
+                        self.fill_rnd(grid)
                         
                         
-                # place cell in grid (left mousebutton)
+                # place cell in grid (hold left mousebutton)
                 if pg.mouse.get_pressed()[0]:
-                    pos = pg.mouse.get_pos()
-                    row = pos[1] // self.size
-                    col = pos[0] // self.size
-                    radius = int(self.ra)
-                    grid[row : row + radius, col : col + radius] = 1
+                    self.draw_cell(grid)
                     
-                    
-                    
+                     
             
             # refresh screen
             self.screen.fill(self.cgrid)

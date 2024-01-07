@@ -67,14 +67,14 @@ def eca(config):
         fps_box := Input_Box(name="FPS-CAP",
                              rect=(0.68 * x, 0.7 * y, 0.1 * x, 0.03 * y),
                              text=f"{config.fps_cap}",
-                             error_message="fps cap should be an int greater than zero")                                             
-        
+                             error_message="fps cap should be an int greater than zero")      
+                                               
         ]
     
     # create buttons
     run_button = Button((0.78 * x, 0.5 * y , 0.2 * x, 0.3 * y), "RUN!", font="Impact")
     return_button = Button((0.06 * x, 0.07 * y, 0.07 * x, 0.07 * y), "BACK")
-    mystery_button = Button((0.94 * x, 0.07 * y, 0.07 * x, 0.07 * y), "MYSTERY", hidden=True)
+    mystery_button = Button((0.94 * x, 0.07 * y, 0.07 * x, 0.07 * y), "SECRET", hidden=True)
     
 
     
@@ -86,7 +86,7 @@ def eca(config):
         
         for event in pg.event.get():
             
-            # window close button (windows)
+            # window close button (when tabbed out)
             if event.type == pg.QUIT:
                 running = not running
             

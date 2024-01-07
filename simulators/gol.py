@@ -64,7 +64,7 @@ def gol(config):
     # create buttons
     run_button = Button((0.78 * x, 0.5 * y , 0.2 * x, 0.3 * y), "RUN!", font="Impact")
     return_button = Button((0.06 * x, 0.07 * y, 0.07 * x, 0.07 * y), "BACK")
-    mystery_button = Button((0.94 * x, 0.07 * y, 0.07 * x, 0.07 * y), "MYSTERY", hidden=True)
+    mystery_button = Button((0.94 * x, 0.07 * y, 0.07 * x, 0.07 * y), "SECRET", hidden=True)
     
     
 
@@ -76,7 +76,7 @@ def gol(config):
         
         for event in pg.event.get():
             
-            # window close button (windows)
+            # window close button (when tabbed out)
             if event.type == pg.QUIT:
                 running = not running
             

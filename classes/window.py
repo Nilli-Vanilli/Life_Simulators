@@ -25,8 +25,8 @@ class Window:
     
     # define fonts
     ftitle = "Impact"
-    finput = None
-    fbutton = None
+    finput = "freesansbold"
+    fbutton = "freesansbold"
     
     
         

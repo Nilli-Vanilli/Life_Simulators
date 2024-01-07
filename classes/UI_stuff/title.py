@@ -3,13 +3,16 @@ import pygame as pg
 
 class Title(Window):
     
-    def __init__(self, text: str, pos: tuple, size: float, font=None, underlined=True) -> None:
+    def __init__(self, text: str, pos: tuple, size: float, font=None, colour=None, underlined=True) -> None:
         super().__init__()
         
         if font: font = pg.font.SysFont(font, int(size))
         else: font = pg.font.SysFont(self.ftitle, int(size))
+        
+        if colour: colour = colour
+        else: colour = self.ctitle
             
-        self.text = font.render(text, True, self.ctitle)
+        self.text = font.render(text, True, colour)
         
         self.size = font.size(text)
         
@@ -23,6 +26,7 @@ class Title(Window):
         self.screen.blit(self.text, (self.x, self.y))
         
         if self.underlined:
-            pg.draw.line(self.screen, self.cshade_neg, (self.x, self.y + self.size[1]), (self.x + self.size[0], self.y + self.size[1]), 3)
+            pg.draw.line(self.screen, self.cshade_neg, (self.x, self.y + self.size[1]),
+                         (self.x + self.size[0], self.y + self.size[1]), 3)
         
         
