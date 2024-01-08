@@ -101,6 +101,12 @@ class ECA(Window):
     
     # run simulation
     def run(self):
+        
+        # update width and height
+        self.grid_width = self.width // self.size
+        self.grid_height = self.height // self.size
+        
+        
     
         # check for random variables or mystery box
         if self.mb or self.rule_rnd: self.rule = f"{randint(0,255):08b}"                                                                        # rule

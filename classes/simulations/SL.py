@@ -282,6 +282,10 @@ class SL(Window):
     
     def run(self):
         
+        # update width and height
+        self.grid_width = self.width // self.size
+        self.grid_height = self.height // self.size
+        
         # create grid
         grid = np.zeros((self.grid_height, self.grid_width))
         

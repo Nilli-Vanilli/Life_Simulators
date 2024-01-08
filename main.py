@@ -4,7 +4,9 @@ Todo:
 
 
 MAIN:
+draw cursor
 exit screen
+nice colours and fonts
 dark mode (local)
 readme
 github
@@ -21,6 +23,7 @@ GOL:
 
 
 PL:
+randomisers
 input screen (matrix!!!)
 input handling
 mystery box
@@ -28,6 +31,7 @@ mystery box
 
 
 SMOOTHLIFE:
+randomisers
 input handling
 mystery box
 '''

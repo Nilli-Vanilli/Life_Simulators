@@ -1,5 +1,6 @@
 from classes.window import Window
 import pygame as pg
+from math import floor
 
 class Input_Box(Window):
     
@@ -25,6 +26,8 @@ class Input_Box(Window):
         self.height = height
         
         self.text = text
+        
+        self.cursorindex = 0
         
         if font: self.font = pg.font.SysFont(font, int(self.height))
         else: self.font = pg.font.SysFont(self.finput, int(self.height))
@@ -70,36 +73,70 @@ class Input_Box(Window):
 		#create rect
         input_rect = pg.Rect(self.x, self.y, self.width, self.height)
         
+        # render font
+        text_img = self.font.render(self.text, True, self.cinput_text)
+        
+        # create another rect
+        text_rect = text_img.get_rect()
+        text_rect.x, text_rect.y = (self.x + 5, self.y + self.height // 2 - self.text_height // 2)
+
+        # update text size
+        self.text_len = text_img.get_width()
+        self.text_height = text_img.get_height()
         
         
-        # check if box is clicked
+        
+        # check mouseover
         hover = False
+        clicked = pg.mouse.get_pressed()[0]
+        
+        # check if mouse is hovering over box
         if input_rect.collidepoint(pos):
-            
             hover = True
             
-            if pg.mouse.get_pressed()[0] and not self.active:
+            # if mouse is clicked activate box
+            if clicked:
                 self.active = True
-            
-        else:
-            if pg.mouse.get_pressed()[0] and self.active:
+                
+                # if text is clicked, update cursor index
+                if text_rect.collidepoint(pos):
+                    self.cursorindex = floor(((pos[0] - text_rect.x) / text_rect.w * len(self.text)))
+                
+                # if mouse is clicked to the right of text, set cursor index to last
+                else: self.cursorindex = len(self.text) - 1
+                    
+        # if mouse is clicked outside of box, deactivate it
+        elif clicked:
                 self.active = False
         
         
         
-        # update text
-        if self.active and not self.lock and event:
+        # active mode
+        if self.active and not self.lock:
+            
+            # if a key was pressed
+            if event:
                 
-                # if backspace, remove last character
+                # if backspace and there is text in the box, remove last character
                 if event.key == pg.K_BACKSPACE:
-                    self.text = self.text[:-1]
+                    if len(self.text) > 0:
+                        self.text = self.text[:self.cursorindex] + self.text[self.cursorindex + 1:]
+                        if self.cursorindex > 0:
+                            self.cursorindex -= 1
                 
                 # dont add empty "return" character when simulation is run
                 elif event.key == pg.K_RETURN: pass
                     
                 # if not backspace or enter, add character, unless current text box is full
                 elif self.text_len <= self.width - 15:
-                    self.text += event.unicode
+                    text_ = self.text[:self.cursorindex + 1] + event.unicode
+                    if self.cursorindex < len(self.text):
+                        text_ += self.text[self.cursorindex + 1:]
+                    self.text = text_
+                    self.cursorindex += 1
+                    
+            # draw cursor
+            pass
         
 
         
@@ -124,15 +161,6 @@ class Input_Box(Window):
         pg.draw.line(self.screen, self.cshade_pos, (self.x, self.y), (self.x, self.y + self.height), 2)
         pg.draw.line(self.screen, self.cshade_neg, (self.x, self.y + self.height), (self.x + self.width, self.y + self.height), 2)
         pg.draw.line(self.screen, self.cshade_neg, (self.x + self.width, self.y), (self.x + self.width, self.y + self.height), 2)
-        
-        
-        
-        # render font
-        text_img = self.font.render(self.text, True, self.cinput_text)
-        
-        # update text size
-        self.text_len = text_img.get_width()
-        self.text_height = text_img.get_height()
         
         # draw text in box
         self.screen.blit(text_img, (self.x + 5, self.y + self.height // 2 - self.text_height // 2))

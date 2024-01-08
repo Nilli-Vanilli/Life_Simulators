@@ -108,6 +108,12 @@ class GOL(Window):
     
     def run(self):
         
+        # update with and height
+        self.grid_width = self.width // self.size
+        self.grid_height = self.height // self.size
+        
+        
+        
         # check for random variables or mystery box
         if self.mb or self.rule_rnd: self.rules = (a := randint(0,8),randint(a,8),randint(0,8))                          # rule
         if self.mb or self.size_rnd: self.size = randint(5,100)                                                          # size
