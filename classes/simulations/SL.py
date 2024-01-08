@@ -255,10 +255,10 @@ class SL(Window):
         row = pos[1] // self.size
         col = pos[0] // self.size
         
-        # get radius of cell
-        radius = int(self.ra)
+        # get half of radius of cell
+        radius = int(self.ra / 2)
         
-        grid[row : row + radius, col : col + radius] = 1
+        grid[row - radius : row + radius, col - radius : col + radius] = 1
         
     
     
