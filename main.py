@@ -4,7 +4,6 @@ Todo:
 
 
 MAIN:
-draw cursor
 exit screen
 nice colours and fonts
 dark mode (local)

@@ -14,6 +14,9 @@ class Button(Window):
         self.y = y - height / 2
         self.width = width
         self.height = height
+        self.rect = pg.Rect(self.x, self.y, self.width, self.height)
+        
+        self.colour = self.cbutton_body
         
         self.font_size = self.height // 2
         
@@ -38,7 +41,7 @@ class Button(Window):
         
     
     
-    def draw(self):
+    def check_mouseover(self):
         
         # return value
         action = False
@@ -46,47 +49,54 @@ class Button(Window):
         # get mouse position
         pos = pg.mouse.get_pos()
 
-		# create rect
-        button_rect = pg.Rect(self.x, self.y, self.width, self.height)
-        
-        
-        
-        # check if mouse is clicked or hovering
-        if button_rect.collidepoint(pos):
+        # check if mouse is hovering over button
+        if self.rect.collidepoint(pos):
             
+            # if the mouse is clicked, display click colour
             if pg.mouse.get_pressed()[0]:
                 self.clicked = True
-                colour = self.cbutton_click
-                
-            elif not pg.mouse.get_pressed()[0] and self.clicked:
-                self.clicked = not self.clicked
-                action = True
-                colour = self.cbutton_hover
-                
-            else: colour = self.cbutton_hover
+                self.colour = self.cbutton_click
             
-        else: colour = self.cbutton_body
+            # after a click, reset and send button output
+            elif not pg.mouse.get_pressed()[0] and self.clicked:
+                self.clicked = False
+                action = True
+                self.colour = self.cbutton_hover
+            
+            # if mouse is hovering display hover colour
+            else: self.colour = self.cbutton_hover
         
+        # if mouse is not hovering display regular colour
+        else: self.colour = self.cbutton_body
         
+        return action
         
+      
+      
+    def shade_button(self):
+        
+        pg.draw.line(self.screen, self.cshade_pos, (self.x, self.y), (self.x + self.width, self.y), 2)
+        pg.draw.line(self.screen, self.cshade_pos, (self.x, self.y), (self.x, self.y + self.height), 2)
+        pg.draw.line(self.screen, self.cshade_neg, (self.x, self.y + self.height), (self.x + self.width, self.y + self.height), 2)
+        pg.draw.line(self.screen, self.cshade_neg, (self.x + self.width, self.y), (self.x + self.width, self.y + self.height), 2)
+            
+          
+    
+    def draw(self):
+        
+        # check mouseover
+        action = self.check_mouseover()
+        
+        # if button is not hidden
         if not self.hidden:
             
             # draw button
-            pg.draw.rect(self.screen, colour, button_rect)
-
-
+            pg.draw.rect(self.screen, self.colour, self.rect)
 
             # add shading to button
-            pg.draw.line(self.screen, self.cshade_pos, (self.x, self.y), (self.x + self.width, self.y), 2)
-            pg.draw.line(self.screen, self.cshade_pos, (self.x, self.y), (self.x, self.y + self.height), 2)
-            pg.draw.line(self.screen, self.cshade_neg, (self.x, self.y + self.height), (self.x + self.width, self.y + self.height), 2)
-            pg.draw.line(self.screen, self.cshade_neg, (self.x + self.width, self.y), (self.x + self.width, self.y + self.height), 2)
+            self.shade_button()
 
-
-            
             # draw text on button
             self.screen.blit(self.text, (self.x + self.width // 2 - self.text_len // 2, self.y + self.height // 2 - self.text_height // 2))
-        
-        
-        
+         
         return action
