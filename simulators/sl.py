@@ -8,19 +8,19 @@ from classes import *
 
 '''main'''
 
-def sl(config):
+def run_sl(config):
     
     # position multipliers
-    x = config.width
-    y = config.height
+    x = config.window.width
+    y = config.window.height
     
     # create title
     title = Title(text="SMOOTH LIFE", pos=(0.5 * x, 0.1 * y), size=0.05 * x)
     
     # create text for rgb channels
-    rgb_title = Title(text="RGB CHANNELS:", pos=(0.78 * x, 0.7 * y), size=0.03 * x, font="Times New Roman")
+    rgb_title = Title(text="RGB CHANNELS:", pos=(0.78 * x, 0.7 * y), size=0.03 * x, font=config.window.fonts.subtitle)
     rgb_error = Title(text="at least one channel should be selected", pos=(0.78 * x, 0.91 * y),size=0.03 * y,
-                      font=config.finput, colour=(255,0,0), underlined=False)
+                      font=config.window.fonts.text, colour=(255,0,0), underlined=False)
     
     # create input boxes
     boxes = [
@@ -104,17 +104,16 @@ def sl(config):
                     running = not running
                 
                 # run sim (enter)
-                if event.key == pg.K_RETURN:
-                    if all(validities): config.run()
-                    else: continue
+                if event.key == pg.K_RETURN and all(validities):
+                    config.run()
                      
         
         
         # draw background
-        config.screen.fill(config.cbg)
+        config.window.draw_bg()
         
         # draw title
-        title.draw() 
+        title.draw(config.window) 
             
         
         
@@ -130,29 +129,29 @@ def sl(config):
         
         # draw boxes
         for box in boxes:
-            box.draw(key)
+            box.draw(config.window, key)
         
         
         
         # draw run button
         if all(validities):
-            run_button.colours("green2", "green", "green3", "white")  # valid
-            if run_button.draw(): config.run()
+            run_button.set_colours("green2", "green", "green3", "white")  # valid
+            if run_button.draw(config.window): config.run()
         
         else:
-            run_button.colours("gray62", "gray75", "gray57", "white") # invalid
-            run_button.draw()
+            run_button.set_colours("gray62", "gray75", "gray57", "white") # invalid
+            run_button.draw(config.window)
         
         
         
         # draw return button
-        if return_button.draw():
+        if return_button.draw(config.window):
             running = False
             
             
 
         # draw mystery box button
-        if mystery_button.draw():
+        if mystery_button.draw(config.window):
             config.mb = not config.mb
             mystery_button.hidden = not mystery_button.hidden
             
@@ -166,24 +165,24 @@ def sl(config):
         
         
         # draw RGB buttons
-        if config.red: red_button.colours("red2", "red", "red3", "white")                # red
-        else: red_button.colours("red4", "red3", "red", "white")
-        if red_button.draw(): config.red = not config.red
+        if config.red: red_button.set_colours("red2", "red", "red3", "white")                # red
+        else: red_button.set_colours("red4", "red3", "red", "white")
+        if red_button.draw(config.window): config.red = not config.red
         
-        if config.green: green_button.colours("green2", "green", "green3", "white")     # green
-        else: green_button.colours("green4", "green3", "green", "white")
-        if green_button.draw(): config.green = not config.green
+        if config.green: green_button.set_colours("green2", "green", "green3", "white")     # green
+        else: green_button.set_colours("green4", "green3", "green", "white")
+        if green_button.draw(config.window): config.green = not config.green
         
-        if config.blue: blue_button.colours("blue2", "blue", "blue3", "white")          # blue
-        else: blue_button.colours("blue4", "blue3", "blue", "white")
-        if blue_button.draw(): config.blue = not config.blue
+        if config.blue: blue_button.set_colours("blue2", "blue", "blue3", "white")          # blue
+        else: blue_button.set_colours("blue4", "blue3", "blue", "white")
+        if blue_button.draw(config.window): config.blue = not config.blue
         
         # draw RBG titles
-        rgb_title.draw()             # rgb channels
+        rgb_title.draw(config.window)             # rgb channels
         if not rgb_validity[0]:
-            rgb_error.draw()         # error message
+            rgb_error.draw(config.window)         # error message
         
         
         
         # update screen
-        config.update(fps=60)
+        config.window.update(fps=60)

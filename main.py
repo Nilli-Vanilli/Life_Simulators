@@ -56,13 +56,16 @@ def main():
     # create window
     window = Window()
     
+    # create cellular automata
+    CA = Cellular_Automata(window)
+    
     # position multipliers
     x = window.width
     y = window.height
     
     # create title
     title = Title(text="LIFE SIMULATORS", pos=(0.5 * x, 0.15 * y), size=0.1 * x)
-    subtitle = Title(text="By Niels den Hollander :)", pos=(0.5 * x, 0.3 * y), size = 0.03 * x, font="Times New Roman", underlined=False)
+    subtitle = Title(text="By Niels den Hollander :)", pos=(0.5 * x, 0.3 * y), size = 0.03 * x, font=window.fonts.subtitle, underlined=False)
     
     # create buttons
     eca_button = Button((0.25 * x, 0.45 * y, 0.45 * x, 0.1 * y), "ELEMENTARY CELLULAR AUTOMATA")
@@ -92,92 +95,45 @@ def main():
                     
         
         # draw background
-        window.screen.fill(window.cbg)
+        window.draw_bg()
         
         # draw title
-        title.draw()
-        subtitle.draw()
+        title.draw(window)
+        subtitle.draw(window)
         
         
         
         # draw quit button
-        if quit_button.draw():
+        if quit_button.draw(window):
             running = False
         
         
         
         # draw eca button
-        if eca_button.draw():
-            
-            # initialise CA
-            config = ECA(
-                rule="01101110", 
-                size=10, 
-                start_indices=[],      # set to middle cell on default
-                boundary="periodic",
-                fps_cap=60
-                )
-
-            # run CA
-            eca(config)
+        if eca_button.draw(window):
+            CA.eca.window = window
+            run_eca(CA.eca)
         
         
         
         # draw gol button
-        if gol_button.draw():
-            
-            # initialise CA
-            config = GOL(
-                rules=(2,3,3),
-                size=20,
-                boundary="periodic",
-                fps_cap=10
-                )
-             
-            # run CA
-            gol(config)
+        if gol_button.draw(window):
+            CA.gol.window = window
+            run_gol(CA.gol)
         
         
         
         # draw pl button
-        if pl_button.draw():
-            
-            # initialise CA
-            config = PL(
-                matrix=rnd_matrix(6),
-                num_particles=300,
-                size=3,
-                fric_hl=0.04,
-                r_max=0.1,
-                beta=0.3,
-                forcefactor=20,
-                follow_mouse=False,
-                dt=0.02,
-                fps_cap=60
-            )
-    
-            # run CA
-            pl(config)
+        if pl_button.draw(window):
+            CA.pl.window = window
+            run_pl(CA.pl)
         
         
         
         # draw sl button
-        if sl_button.draw():
-            
-            # initialise CA
-            config = SL(
-               size=5,
-               outer_radius=21,
-               sigmode=4,
-               sigtype=4,
-               mixtype=4,
-               stepmode=0,
-               dt=0,
-               fps_cap=60
-            )
-    
-            # run CA
-            sl(config)
+        if sl_button.draw(window):
+            CA.sl.window = window
+            run_sl(CA.sl)
         
         
         

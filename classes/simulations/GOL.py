@@ -3,7 +3,7 @@ import pygame as pg
 from random import randint, choice
 import numpy as np
 
-class GOL(Window):
+class GOL():
     
     # colours
     cgrid = (40,40,40)
@@ -23,8 +23,9 @@ class GOL(Window):
     
     
     
-    def __init__(self, rules: tuple, size: int, boundary: str, fps_cap: int, grid_lines=True) -> None:
-        super().__init__()
+    def __init__(self, window, rules: tuple, size: int, boundary: str, fps_cap: int, grid_lines=True) -> None:
+        
+        self.window = window
         
         self.rules = rules
         self.size = size
@@ -33,8 +34,8 @@ class GOL(Window):
         
         self.grid_lines = 1 if grid_lines else 0
         
-        self.grid_width = self.width // self.size
-        self.grid_height = self.height // self.size
+        self.width = self.window.width // self.size
+        self.height = self.window.height // self.size
     
     
     
@@ -80,10 +81,10 @@ class GOL(Window):
                     if not paused: colour = self.con
             
             # draw cell
-            pg.draw.rect(self.screen, colour, (col * self.size,
-                                               row * self.size,
-                                               self.size - self.grid_lines,
-                                               self.size - self.grid_lines))
+            pg.draw.rect(self.window.screen, colour, (col * self.size,
+                                                      row * self.size,
+                                                      self.size - self.grid_lines,
+                                                      self.size - self.grid_lines))
             
             
             
@@ -94,11 +95,11 @@ class GOL(Window):
     def fill_rnd(self, grid):
         
         # turn on rougly a sixth of the cells in the grid
-        for _ in range(self.grid_width * self.grid_height // 6):
+        for _ in range(self.width * self.height // 6):
             
             # get random position
-            row = randint(0, self.grid_height - 1)
-            col = randint(0, self.grid_width - 1)
+            row = randint(0, self.height - 1)
+            col = randint(0, self.width - 1)
             
             grid[row, col] = 1
             
@@ -108,9 +109,9 @@ class GOL(Window):
     
     def run(self):
         
-        # update with and height
-        self.grid_width = self.width // self.size
-        self.grid_height = self.height // self.size
+        # update width and height
+        self.width = self.window.width // self.size
+        self.height = self.window.height // self.size
         
         
         
@@ -126,7 +127,7 @@ class GOL(Window):
         
         
         # create grid
-        cells = np.zeros((self.grid_height, self.grid_width), dtype=int)
+        cells = np.zeros((self.height, self.width), dtype=int)
         
         
         
@@ -170,14 +171,14 @@ class GOL(Window):
             
             
             # refresh screen
-            self.screen.fill(self.cgrid)
+            self.window.screen.fill(self.cgrid)
             
             # if simulation is paused
             if paused:
                 self.update_grid(cells, paused=True)               # draw grid but dont compute next generation
-                self.update(fps=60)                                # raise fps to get mouse pos more effeciently
+                self.window.update(fps=60)                         # raise fps to get mouse pos more effeciently
             
             # if simulation is not paused
             else:
                 cells = self.update_grid(cells)                    # draw grid and compute next generation
-                self.update()                                      # use user set fps
+                self.window.update(self.fps_cap)                   # use user set fps

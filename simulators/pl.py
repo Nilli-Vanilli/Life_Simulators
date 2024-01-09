@@ -8,7 +8,7 @@ from classes import *
 
 '''main'''
 
-def pl(config):
+def run_pl(config):
     
     
     
@@ -44,14 +44,13 @@ def pl(config):
                     break
                 
                 # run sim (enter)
-                if event.key == pg.K_RETURN:
-                    if all(validities): config.run()
-                    else: pass # print(please enter valid variables)
+                if event.key == pg.K_RETURN and all(validities):
+                    config.run()
                      
         
         
         # draw background
-        config.screen.fill((225,225,225))
+        config.window.draw_bg()
         
         
         
@@ -62,23 +61,23 @@ def pl(config):
         
         # draw run button
         if all(validities):
-            run_button.colours("green2", "green", "green3", "white")  # valid
-            if run_button.draw(): config.run()
+            run_button.set_colours("green2", "green", "green3", "white")  # valid
+            if run_button.draw(config.window): config.run()
         
         else:
-            run_button.colours("gray62", "gray75", "gray57", "white") # invalid
-            run_button.draw()
+            run_button.set_colours("gray62", "gray75", "gray57", "white") # invalid
+            run_button.draw(config.window)
         
         
         
         # draw return button
-        if return_button.draw():
+        if return_button.draw(config.window):
             running = False
             
             
 
         # draw mystery box button
-        if mystery_button.draw():
+        if mystery_button.draw(config.window):
             config.mb = not config.mb
             mystery_button.hidden = not mystery_button.hidden
             
@@ -94,4 +93,4 @@ def pl(config):
         
         
         # update screen
-        config.update(fps=60)
+        config.window.update(fps=60)

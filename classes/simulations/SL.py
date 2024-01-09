@@ -94,7 +94,7 @@ def get_multipliers(size, ri, ra):
 
 '''main'''
 
-class SL(Window):
+class SL():
     
     # colour background
     cgrid = (10,10,10)
@@ -111,12 +111,13 @@ class SL(Window):
     
     
     
-    def __init__(self, size: int, outer_radius: float, sigmode: int, sigtype: int, mixtype: int, stepmode: int, dt: float, fps_cap: int) -> None:
-        super().__init__()
+    def __init__(self, window, size: int, outer_radius: float, sigmode: int, sigtype: int, mixtype: int, stepmode: int, dt: float, fps_cap: int) -> None:
+        
+        self.window = window
         
         self.size = size
-        self.grid_width = self.width // self.size
-        self.grid_height = self.height // self.size
+        self.width = self.window.width // self.size
+        self.height = self.window.height // self.size
         
         self.ra = outer_radius
         self.ri = outer_radius / 3
@@ -126,7 +127,7 @@ class SL(Window):
         self.mixtype = mixtype
         self.stepmode = stepmode
         
-        self.M, self.N = get_multipliers((self.grid_height, self.grid_width), self.ri, self.ra)
+        self.M, self.N = get_multipliers((self.height, self.width), self.ri, self.ra)
         
         self.dt = dt
         self.fps_cap = fps_cap
@@ -237,12 +238,12 @@ class SL(Window):
     def fill_rnd(self, grid):
         
         # create a few live cells in the grid, dependent on how large cells should be according to outer radius
-        for _ in range(self.grid_width * self.grid_height // ((self.ra * 2) ** 2)):
+        for _ in range(self.width * self.height // ((self.ra * 2) ** 2)):
             radius = int(self.ra)
             
             # get random position
-            row = np.random.randint(0, self.grid_height - radius) # make sure cells cannot spawn out of bounds
-            col = np.random.randint(0, self.grid_width - radius)
+            row = np.random.randint(0, self.height - radius) # make sure cells cannot spawn out of bounds
+            col = np.random.randint(0, self.width - radius)
             
             grid[row : row + radius, col : col + radius] = 1
         
@@ -272,10 +273,10 @@ class SL(Window):
             colour = (a * self.red, a * self.green, a * self.blue)
             
             # draw pixel
-            pg.draw.rect(self.screen, colour, (col * self.size,
-                                                row * self.size,
-                                                self.size,
-                                                self.size))
+            pg.draw.rect(self.window.screen, colour, (col * self.size,
+                                                      row * self.size,
+                                                      self.size,
+                                                      self.size))
     
     
     
@@ -283,11 +284,11 @@ class SL(Window):
     def run(self):
         
         # update width and height
-        self.grid_width = self.width // self.size
-        self.grid_height = self.height // self.size
+        self.width = self.window.width // self.size
+        self.height = self.window.height // self.size
         
         # create grid
-        grid = np.zeros((self.grid_height, self.grid_width))
+        grid = np.zeros((self.height, self.width))
         
         # running loop
         paused = False
@@ -323,7 +324,7 @@ class SL(Window):
                      
             
             # refresh screen
-            self.screen.fill(self.cgrid)
+            self.window.screen.fill(self.cgrid)
             
             # compute next step
             if not paused:
@@ -333,7 +334,7 @@ class SL(Window):
             self.draw_grid(grid)
             
             # update screen
-            self.update()
+            self.window.update(self.fps_cap)
             
             
         

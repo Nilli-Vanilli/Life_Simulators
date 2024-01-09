@@ -1,11 +1,10 @@
-from classes.window import Window
 import pygame as pg
 from random import randint, choice
 import numpy as np
 
 
 
-class ECA(Window):
+class ECA():
     
     # colours
     cgrid = (40, 40, 40)
@@ -24,8 +23,9 @@ class ECA(Window):
         
         
         
-    def __init__(self, rule: str, size: int, start_indices: list, boundary: str, fps_cap: int, middle=True, grid_lines=True) -> None:
-        super().__init__()
+    def __init__(self, window, rule: str, size: int, start_indices: list, boundary: str, fps_cap: int, middle=True, grid_lines=True) -> None:
+        
+        self.window = window
         
         self.rule = rule
         self.size = size
@@ -37,8 +37,8 @@ class ECA(Window):
         
         self.grid_lines = 1 if grid_lines else 0
         
-        self.grid_width = self.width // self.size
-        self.grid_height = self.height // self.size
+        self.width = window.width // self.size
+        self.height = window.height // self.size
         
         
         
@@ -92,10 +92,10 @@ class ECA(Window):
             
             # determine colour and draw cell
             colour = self.con if grid[row, col] == 1 else self.coff
-            pg.draw.rect(self.screen, colour, (col * self.size,
-                                               row * self.size,
-                                               self.size - self.grid_lines,
-                                               self.size - self.grid_lines))
+            pg.draw.rect(self.window.screen, colour, (col * self.size,
+                                                      row * self.size,
+                                                      self.size - self.grid_lines,
+                                                      self.size - self.grid_lines))
     
     
     
@@ -103,27 +103,25 @@ class ECA(Window):
     def run(self):
         
         # update width and height
-        self.grid_width = self.width // self.size
-        self.grid_height = self.height // self.size
+        self.width = self.window.width // self.size
+        self.height = self.window.height // self.size
         
-        
-    
         # check for random variables or mystery box
-        if self.mb or self.rule_rnd: self.rule = f"{randint(0,255):08b}"                                                                        # rule
-        if self.mb or self.size_rnd: self.size = randint(5,100)                                                                                 # size
-        if self.mb or self.boundary_rnd: self.boundary = choice(["periodic", "dirichlet 0", "dirichlet 1", "neumann"])                          # boundary
-        if self.mb or self.cgrid_rnd: self.cgrid = (randint(0,255), randint(0,255), randint(0,255))                                             # colour grid
-        if self.mb or self.coff_rnd: self.coff = (randint(0,255), randint(0,255), randint(0,255))                                               # colour off
-        if self.mb or self.con_rnd: self.con = (randint(0,255), randint(0,255), randint(0,255))                                                 # colour on
-        if self.mb or self.start_indices_rnd: self.start_indices = [randint(0, self.grid_width - 1) for _ in range(randint(1,4))]       # start indices
+        if self.mb or self.rule_rnd: self.rule = f"{randint(0,255):08b}"                                                                # rule
+        if self.mb or self.size_rnd: self.size = randint(5,100)                                                                         # size
+        if self.mb or self.boundary_rnd: self.boundary = choice(["periodic", "dirichlet 0", "dirichlet 1", "neumann"])                  # boundary
+        if self.mb or self.cgrid_rnd: self.cgrid = (randint(0,255), randint(0,255), randint(0,255))                                     # colour grid
+        if self.mb or self.coff_rnd: self.coff = (randint(0,255), randint(0,255), randint(0,255))                                       # colour off
+        if self.mb or self.con_rnd: self.con = (randint(0,255), randint(0,255), randint(0,255))                                         # colour on
+        if self.mb or self.start_indices_rnd: self.start_indices = [randint(0, self.width - 1) for _ in range(randint(1,4))]       # start indices
         
         # if start index not random, check if middle is set to true
-        elif self.start_indices_middle: self.start_indices = [self.grid_width // 2]
+        elif self.start_indices_middle: self.start_indices = [self.width // 2]
         
         
         
         # create grid
-        cells = np.zeros((self.grid_height, self.grid_width), dtype=int)
+        cells = np.zeros((self.height, self.width), dtype=int)
         
         # turn on cells with start indices
         for index in self.start_indices:
@@ -156,7 +154,7 @@ class ECA(Window):
 
  
             # refresh screen
-            self.screen.fill(self.cgrid)
+            self.window.screen.fill(self.cgrid)
             
             # if simulation is not paused, compute next generation
             if not paused:
@@ -166,4 +164,4 @@ class ECA(Window):
             self.draw_grid(cells)
                 
             # update screen
-            self.update()
+            self.window.update(self.fps_cap)

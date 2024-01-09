@@ -17,11 +17,11 @@ from classes import *
 
 '''main'''
 
-def eca(config):
+def run_eca(config):
     
     # position multipliers
-    x = config.width
-    y = config.height
+    x = config.window.width
+    y = config.window.height
     
     # create title
     title = Title(text="ELEMENTARY CELLULAR AUTOMATA", pos=(0.5 * x, 0.1 * y), size=0.05 * x)
@@ -99,17 +99,16 @@ def eca(config):
                     running = not running
                 
                 # run sim (enter)
-                if event.key == pg.K_RETURN:
-                    if all(validities): config.run()
-                    else: continue
+                if event.key == pg.K_RETURN and all(validities):
+                    config.run()
                      
         
         
         # draw background
-        config.screen.fill(config.cbg)
+        config.window.draw_bg()
         
         # draw title
-        title.draw()
+        title.draw(config.window)
         
 
         
@@ -129,29 +128,29 @@ def eca(config):
         
         # draw boxes
         for box in boxes:
-            box.draw(key)
+            box.draw(config.window, key)
         
 
         
         # draw run button
         if all(validities):
-            run_button.colours("green2", "green", "green3", "white")  # valid
-            if run_button.draw(): config.run()
+            run_button.set_colours("green2", "green", "green3", "white")  # valid
+            if run_button.draw(config.window): config.run()
         
         else:
-            run_button.colours("gray62", "gray75", "gray57", "white") # invalid
-            run_button.draw()
+            run_button.set_colours("gray62", "gray75", "gray57", "white") # invalid
+            run_button.draw(config.window)
         
         
         
         # draw return button
-        if return_button.draw():
+        if return_button.draw(config.window):
             running = False
             
             
 
         # draw mystery box button
-        if mystery_button.draw():
+        if mystery_button.draw(config.window):
             config.mb = not config.mb
             mystery_button.hidden = not mystery_button.hidden
             
@@ -165,7 +164,7 @@ def eca(config):
         
         
         # update screen
-        config.update(fps=60)
+        config.window.update(fps=60)
     
 
     
@@ -229,7 +228,7 @@ def valid_start(config, input_box):
         
         for index in start_indices:
             if abs(index) >= config.width // config.size:
-                input_box.set_error(f"start indices are out of range, max index: ± {config.width // config.size - 1}")
+                input_box.error = f"start indices are out of range, max index: ± {config.width // config.size - 1}"
                 return False
             
         config.start_indices = start_indices
@@ -244,7 +243,7 @@ def valid_start(config, input_box):
             
             case "random": config.start_indices_rnd = True; config.start_indices_middle = False; return True
             case "middle": config.start_indices_middle = True; config.start_indices_rnd = False; return True
-            case _: input_box.set_error("start indices should be a list of ints"); return False
+            case _: input_box.error = "start indices should be a list of ints"; return False
         
     
 

@@ -1,32 +1,74 @@
-from classes.window import Window
+from classes.style import Colours, Fonts
 import pygame as pg
 
-class Title(Window):
+class Title():
     
-    def __init__(self, text: str, pos: tuple, size: float, font=None, colour=None, underlined=True) -> None:
-        super().__init__()
+    # states
+    lock_colour = False
+    lock_font = False
+
+    # declare variables
+    text_size = None
+    colour = None
+    font = None
+    
+    def __init__(self, text: str, pos: tuple, size: float, colour=None, font=None, underlined=True) -> None:
         
-        if font: font = pg.font.SysFont(font, int(size))
-        else: font = pg.font.SysFont(self.ftitle, int(size))
+        self.colours = Colours()
+        self.fonts = Fonts()
         
-        if colour: colour = colour
-        else: colour = self.ctitle
+        if colour: 
+            self.colours.title = colour
+            self.lock_colour = True
+        
+        if font:
+            self.fonts.title = font
+            self.lock_font = True
             
-        self.text = font.render(text, True, colour)
+        self.text = text
         
-        self.size = font.size(text)
+        self.size = size
         
-        self.x = pos[0] - self.size[0] / 2
-        self.y = pos[1] - self.size[1] / 2
+        self.pos = pos
         
         self.underlined = underlined
+        
+        
+        
+    def reset(self):
+        
+        # reset colour and font
+        self.colour = self.colours.title
+        self.font = pg.font.SysFont(self.fonts.title, int(self.size))
+        
+        # reset size and position
+        self.text_size = self.font.size(self.text)
+        self.x = self.pos[0] - self.text_size[0] / 2
+        self.y = self.pos[1] - self.text_size[1] / 2
+        
+        # render text again
+        text_img = self.font.render(self.text, True, self.colours.title)
+        
+        return text_img
+        
     
-    def draw(self):
+    
+    def draw(self, window):
         
-        self.screen.blit(self.text, (self.x, self.y))
+        # reset colours and fonts
+        if not self.lock_colour:
+            self.colours = window.colours
+        if not self.lock_font:
+            self.fonts = window.fonts
+            
+        text_img = self.reset()
         
+        # draw title
+        window.screen.blit(text_img, (self.x, self.y))
+        
+        # draw line under title
         if self.underlined:
-            pg.draw.line(self.screen, self.cshade_neg, (self.x, self.y + self.size[1]),
-                         (self.x + self.size[0], self.y + self.size[1]), 3)
+            pg.draw.line(window.screen, self.colours.underline, (self.x, self.y + self.text_size[1]),
+                         (self.x + self.text_size[0], self.y + self.text_size[1]), 3)
         
         

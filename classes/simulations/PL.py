@@ -38,8 +38,9 @@ class PL(Window):
     # background colour
     cbg = (10,10,10)
     
-    def __init__(self, matrix: np.ndarray, num_particles: int, size: int, fric_hl: float, r_max: float, beta: float, forcefactor: int, follow_mouse: bool, dt: float, fps_cap: int) -> None:
-        super().__init__()
+    def __init__(self, window, matrix: np.ndarray, num_particles: int, size: int, fric_hl: float, r_max: float, beta: float, forcefactor: int, follow_mouse: bool, dt: float, fps_cap: int) -> None:
+
+        self.window = window
         
         self.num_particles = num_particles
         self.num_colours = matrix.shape[0]
@@ -108,8 +109,8 @@ class PL(Window):
                 pos = pg.mouse.get_pos()
                 
                 # calculate euclidean distance between original particle and the mouse
-                rx = self.positions_x[i] - pos[0] / self.width
-                ry = self.positions_y[i] - pos[1] / self.height
+                rx = self.positions_x[i] - pos[0] / self.window.width
+                ry = self.positions_y[i] - pos[1] / self.window.height
                 r = hypot(rx, ry)
                 
                 # if the mouse is within the specified range, create an attracting force between the mouse and the particle
@@ -187,7 +188,7 @@ class PL(Window):
                 
                     
             # refresh screen
-            self.screen.fill(self.cbg)
+            self.window.screen.fill(self.cbg)
             
             # update particles
             if not paused:
@@ -201,10 +202,10 @@ class PL(Window):
             # draw particles
             for i in range(self.num_particles):
                 
-                x = self.positions_x[i] * self.width
-                y = self.positions_y[i] * self.height
+                x = self.positions_x[i] * self.window.width
+                y = self.positions_y[i] * self.window.height
                 colour = pg.Color(0,0,0); colour.hsla = 360 * self.colours[i] / self.num_colours, 100, 50, 100
-                pg.draw.circle(self.screen, colour,(x,y), self.size)
+                pg.draw.circle(self.window.screen, colour,(x,y), self.size)
                 
                 # update tree
                 self.tree.insert((self.positions_x[i], self.positions_y[i]))
@@ -212,6 +213,6 @@ class PL(Window):
             
             
             # update screen
-            self.update()
+            self.window.update(self.fps_cap)
 
         

@@ -1,14 +1,15 @@
-from classes.window import Window
+from classes.style import Colours, Fonts
 import pygame as pg
-from math import floor
 
-class Input_Box(Window):
+class Input_Box():
     
     # states
     active = False
     valid = False
     hover = False
     lock = False
+    lock_colour = False
+    lock_font = False
     
     # text size
     text_len = 0
@@ -21,7 +22,6 @@ class Input_Box(Window):
 
     
     def __init__(self, name: str, rect: tuple, text: str, error_message: str, font=None) -> None:
-        super().__init__()
         
         x, y, width, height = rect
         
@@ -31,28 +31,40 @@ class Input_Box(Window):
         self.height = height
         
         self.text = text
+        self.name = name
+        self.error = error_message
         
-        if font: self.font = pg.font.SysFont(font, int(self.height))
-        else: self.font = pg.font.SysFont(self.finput, int(self.height))
+        self.colours = Colours()
+        self.fonts = Fonts()
         
-        self.name = self.font.render(name, True, self.cinput_text)
-        self.error = self.font.render(error_message, True, self.cinput_invalid)
+        if font:
+            self.fonts.text = font
+            self.lock_font = True
+
+        self.font = pg.font.SysFont(self.fonts.text, int(self.height))
     
     
     
-    def set_error(self, text):
+    def reset(self):
         
-        self.error = self.font.render(text, True, self.cinput_invalid)
-    
-    
-    
-    def colours(self, cactive: tuple, chover: tuple, cinactive: tuple, cinvalid: tuple, ctext: tuple):
+        # render font and texts again
+        self.font = pg.font.SysFont(self.fonts.text, int(self.height))
+        text_img = self.font.render(self.text, True, self.colours.input_text)
+        name_img = self.font.render(self.name, True, self.colours.input_text)
+        error_img = self.font.render(self.error, True, self.colours.input_invalid)
         
-        self.cinput_active = cactive
-        self.cinput_hover = chover
-        self.cinput_inactive = cinactive
-        self.cinput_invalid = cinvalid
-        self.ctext = ctext
+        return text_img, name_img, error_img
+    
+    
+    
+    def colours(self, active: tuple, hover: tuple, inactive: tuple, invalid: tuple, text: tuple):
+        
+        self.colours.input_active = active
+        self.colours.input_hover = hover
+        self.colours.input_inactive = inactive
+        self.colours.input_invalid = invalid
+        self.colours.input_text = text
+        self.lock_colour = True
     
     
     
@@ -83,7 +95,7 @@ class Input_Box(Window):
         
     def get_text_width(self, text):
         
-        text = self.font.render(text, True, self.cinput_text)
+        text = self.font.render(text, True, self.colours.input_text)
         rect = text.get_rect()
         width = rect.w
         
@@ -109,7 +121,7 @@ class Input_Box(Window):
         
     
     
-    def draw_cursor(self):
+    def draw_cursor(self, screen):
         
         # if cursor not all the way to the left, find width of text up to the cursor index and use to get cursor pos
         if self.cursorindex > 0:   
@@ -123,7 +135,7 @@ class Input_Box(Window):
         
         # create bool that inverts every half second and only draw cursor when it is true
         if ((pg.time.get_ticks() - self.start_time)//500 + 1) % 2:
-            pg.draw.line(self.screen, self.cshade_neg, (x,y), (x,y + self.text_height - 2), 3)
+            pg.draw.line(screen, self.colours.input_cursor, (x,y), (x,y + self.text_height - 2), 3)
         
         
     
@@ -160,7 +172,7 @@ class Input_Box(Window):
         
     
     
-    def active_mode(self, event):
+    def active_mode(self, screen, event):
         
         # check if a key was pressed
             if event:
@@ -169,14 +181,23 @@ class Input_Box(Window):
                 if event.key == pg.K_BACKSPACE:
                     
                     # check if there is text in the box and the cursor is not all the way to the left
-                    if len(self.text) * self.cursorindex != 0:
+                    if len(self.text) + self.cursorindex > 0:
                         
                         # remove a character behind the cursor and decrease the cursor index
                         self.text = self.text[:self.cursorindex - 1] + self.text[self.cursorindex:]
                         self.cursorindex -= 1
                 
-                # dont add empty "return" character when simulation is run with enter
-                elif event.key == pg.K_RETURN: pass
+                # if left arrow, move cursor index left if possible
+                elif event.key == pg.K_LEFT and self.cursorindex > 0:
+                    self.cursorindex -= 1
+                
+                # if right arrow, move cursor index right if possible
+                elif event.key == pg.K_RIGHT and self.cursorindex < len(self.text):
+                    self.cursorindex += 1
+                
+                # ignore these inputs
+                elif event.key in [pg.K_RETURN, pg.K_LSHIFT, pg.K_RSHIFT, pg.K_LCTRL, pg.K_RCTRL, pg.K_CAPSLOCK]: 
+                    pass
                     
                 # if not backspace or enter, add character in front of cursor and increase the cursor index
                 elif self.text_len <= self.width - 15:
@@ -184,39 +205,44 @@ class Input_Box(Window):
                     self.cursorindex += 1
                   
             # draw cursor
-            self.draw_cursor()
+            self.draw_cursor(screen)
              
     
     
     def get_colour(self):
         
-        if self.lock: colour = self.cinput_inactive     # locked
+        if self.lock: colour = self.colours.input_inactive     # locked
         
-        elif self.active: colour = self.cinput_active   # active
+        elif self.active: colour = self.colours.input_active   # active
             
-        elif self.hover: colour = self.cinput_hover     # hovering
+        elif self.hover: colour = self.colours.input_hover     # hovering
         
-        elif self.valid: colour = self.cinput_inactive  # inactive
+        elif self.valid: colour = self.colours.input_inactive  # inactive
         
-        else: colour = self.cinput_invalid              # invalid
+        else: colour = self.colours.input_invalid              # invalid
             
         return colour
     
     
     
-    def shade_box(self):
+    def shade_box(self, screen):
         
-        pg.draw.line(self.screen, self.cshade_pos, (self.x, self.y), (self.x + self.width, self.y), 2)
-        pg.draw.line(self.screen, self.cshade_pos, (self.x, self.y), (self.x, self.y + self.height), 2)
-        pg.draw.line(self.screen, self.cshade_neg, (self.x, self.y + self.height), (self.x + self.width, self.y + self.height), 2)
-        pg.draw.line(self.screen, self.cshade_neg, (self.x + self.width, self.y), (self.x + self.width, self.y + self.height), 2)
+        pg.draw.line(screen, self.colours.shade_pos, (self.x, self.y), (self.x + self.width, self.y), 2)
+        pg.draw.line(screen, self.colours.shade_pos, (self.x, self.y), (self.x, self.y + self.height), 2)
+        pg.draw.line(screen, self.colours.shade_neg, (self.x, self.y + self.height), (self.x + self.width, self.y + self.height), 2)
+        pg.draw.line(screen, self.colours.shade_neg, (self.x + self.width, self.y), (self.x + self.width, self.y + self.height), 2)
         
         
     
-    def draw(self, event):
+    def draw(self, window, event):
         
-        # render font
-        text_img = self.font.render(self.text, True, self.cinput_text)
+        # reset colours and fonts
+        if not self.lock_colour:
+            self.colours = window.colours
+        if not self.lock_font:
+            self.fonts = window.fonts
+        
+        text_img, name_img, error_img = self.reset()
 
         # update text size
         self.text_len = text_img.get_width()
@@ -230,23 +256,23 @@ class Input_Box(Window):
         
         # if box is active and not locked, allow user to adjust text
         if self.active and not self.lock:
-            self.active_mode(event)
+            self.active_mode(window.screen, event)
             
         # get colour
         colour = self.get_colour()
         
         # draw box
-        pg.draw.rect(self.screen, colour, input_rect, 2)
+        pg.draw.rect(window.screen, colour, input_rect, 2)
         
         # add shading to box
-        self.shade_box()
+        self.shade_box(window.screen)
         
         # draw text in box
-        self.screen.blit(text_img, (self.x + 5, self.y + self.height // 2 - self.text_height // 2))
+        window.screen.blit(text_img, (self.x + 5, self.y + self.height // 2 - self.text_height // 2))
         
         # draw name
-        self.screen.blit(self.name, (self.x + 5, self.y - self.height // 2 - self.text_height // 2))
+        window.screen.blit(name_img, (self.x + 5, self.y - self.height // 2 - self.text_height // 2))
         
         # if invalid, draw error message
         if not self.valid and not self.active:
-            self.screen.blit(self.error, (self.x + 5, self.y + 3 * self.height // 2 - self.text_height // 2 + 5))
+            window.screen.blit(error_img, (self.x + 5, self.y + 3 * self.height // 2 - self.text_height // 2 + 5))

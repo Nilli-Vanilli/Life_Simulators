@@ -7,11 +7,11 @@ from classes import *
 
 '''main'''
 
-def gol(config):
+def run_gol(config):
     
     # position multipliers
-    x = config.width
-    y = config.height
+    x = config.window.width
+    y = config.window.height
     
     # create title
     title = Title(text="GAME OF LIFE", pos=(0.5 * x, 0.1 * y), size=0.05 * x)
@@ -89,17 +89,16 @@ def gol(config):
                     running = not running
                 
                 # run sim (enter)
-                if event.key == pg.K_RETURN:
-                    if all(validities): config.run()
-                    else: continue
+                if event.key == pg.K_RETURN and all(validities):
+                    config.run()
         
         
         
         # draw bg
-        config.screen.fill(config.cbg)
+        config.window.draw_bg()
         
         # draw title
-        title.draw()
+        title.draw(config.window)
         
         
         
@@ -119,29 +118,29 @@ def gol(config):
         
         # draw boxes
         for box in boxes:
-            box.draw(key)
+            box.draw(config.window, key)
         
 
         
         # draw run button
         if all(validities):
-            run_button.colours("green2", "green", "green3", "white")  # valid
-            if run_button.draw(): config.run()
+            run_button.set_colours("green2", "green", "green3", "white")  # valid
+            if run_button.draw(config.window): config.run()
         
         else:
-            run_button.colours("gray62", "gray75", "gray57", "white") # invalid
-            run_button.draw()
+            run_button.set_colours("gray62", "gray75", "gray57", "white") # invalid
+            run_button.draw(config.window)
         
         
         
         # draw return button
-        if return_button.draw():
+        if return_button.draw(config.window):
             running = False
             
             
 
         # draw mystery box button
-        if mystery_button.draw():
+        if mystery_button.draw(config.window):
             config.mb = not config.mb
             mystery_button.hidden = not mystery_button.hidden
             
@@ -155,7 +154,7 @@ def gol(config):
 
         
         # update screen
-        config.update(fps=60)
+        config.window.update(fps=60)
 
 
 
