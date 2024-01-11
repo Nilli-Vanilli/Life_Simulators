@@ -38,37 +38,37 @@ def run_sl(config):
         size_box := Input_Box(name="SIZE:",
                               rect=(0.05 * x, 0.45 * y, 0.5 * x, 0.03 * y),
                               text=f"{config.size}",
-                              error_message="todo"),
+                              error_message="size should be an int between 5 and 20"),
         
         ra_box := Input_Box(name="OUTER RADIUS:",
                             rect=(0.05 * x, 0.55 * y, 0.5 * x, 0.03 * y),
                             text=f"{config.ra}",
-                            error_message="todo"),
+                            error_message="outer radius should be a float between 5 and 50"),
         
         birth_box := Input_Box(name="BIRTH RANGE:",
                                rect=(0.05 * x, 0.65 * y, 0.5 * x, 0.03 * y),
                                text=f"{config.birth_range}",
-                               error_message="todo"),  
+                               error_message="birth range should be a pair of floats between 0 and 1 such that range[0] < range[1]"),  
         
         survival_box := Input_Box(name="SURVIVAL RANGE:",
                                   rect=(0.05 * x, 0.75 * y, 0.5 * x, 0.03 * y),
                                   text=f"{config.survival_range}",
-                                  error_message="todo"),
+                                  error_message="survival range should be a pair of floats between 0 and 1 such that range[0] < range[1]"),
         
         widths_box := Input_Box(name="SIGMOID WIDTHS:",
                                 rect=(0.05 * x, 0.85 * y, 0.5 * x, 0.03 * y),
                                 text=f"{config.sigmoid_widths}",
-                                error_message="todo"),                                     
+                                error_message="sigmoid widths should be a pair of floats such that 0 < widths[0] <= 0.2 and 0 < widths[1] <= 1"),                                     
         
-        fps_box := Input_Box(name="FPS-CAP",
+        fps_box := Input_Box(name="FPS-CAP:",
                              rect=(0.67 * x, 0.6 * y, 0.1 * x, 0.03 * y),
                              text=f"{config.fps_cap}",
-                             error_message="fps cap should be an int greater than zero"),
+                             error_message="fps cap should be an int greater than five"),
         
         dt_box := Input_Box(name="DT:",
                             rect=(0.79 * x, 0.6 * y, 0.1 * x, 0.03 * y),
                             text=f"{config.dt}",
-                            error_message="todo")
+                            error_message="dt should be a float")
         
         ]
     
@@ -117,12 +117,23 @@ def run_sl(config):
             
         
         
-        # temp validities
-        input_validities = [True]
+        # check input box validities
+        modes_box.valid = True if config.mb else valid_modes(config, modes_box.text.lower())
+        types_box.valid = True if config.mb else valid_types(config, types_box.text.lower())
+        size_box.valid = True if config.mb else valid_size(config, size_box.text.lower())
+        ra_box.valid = True if config.mb else valid_ra(config, ra_box.text.lower())
+        birth_box.valid = True if config.mb else valid_birth(config, birth_box.text.lower())
+        survival_box.valid = True if config.mb else valid_survival(config, survival_box.text.lower())
+        widths_box.valid = True if config.mb else valid_widths(config, widths_box.text.lower())
+        fps_box.valid = valid_fps(config, fps_box.text.lower()) # allowed to change during mb
+        dt_box.valid = valid_dt(config, dt_box.text.lower()) # allowed to change during mb
+        
+        input_validities = [box.valid for box in boxes]
         
         # check if at least one rgb channel is selected
         rgb_validity = [any([config.red, config.green, config.blue])]
         
+        # combine validities
         validities = input_validities + rgb_validity
         
         
@@ -159,8 +170,9 @@ def run_sl(config):
             for box in boxes:
                 box.toggle_lock("MYSTERY BOX!!!")
             
-            # unlock FPS cap
+            # unlock FPS cap and dt
             fps_box.toggle_lock(None)
+            dt_box.toggle_lock(None)
             
         
         
@@ -186,3 +198,168 @@ def run_sl(config):
         
         # update screen
         config.window.update(fps=60)
+    
+    
+    
+    
+    
+    '''input handeling'''
+
+def valid_modes(config, user_input):
+    
+    try:
+        modes = tuple(int(i) for i in user_input.strip("()").split(","))
+        
+        if len(modes) != 2:
+            return False
+        
+        if 0 < modes[0] <= 4 and 0 <= modes[1] <= 4:
+            
+            config.sigmode = modes[0]
+            config.stepmode = modes[1]
+            config.modes_rnd = False
+            return True
+    
+    except:
+        match user_input:
+            
+            case "random": config.modes_rnd = True; return True
+            case _: return False
+            
+
+
+def valid_types(config, user_input):
+    
+    try:
+        types = tuple(int(i) for i in user_input.strip("()").split(","))
+        
+        if len(types) != 2: return False
+        
+        if all((typ in (0,1,4)) for typ in types):
+            
+            config.sigtype = types[0]
+            config.mixtype = types[1]
+            config.types_rnd = False
+            return True
+    
+    except:
+        if user_input == "random": config.types_rnd = True; return True
+
+
+
+def valid_size(config, user_input):
+    
+    try: 
+        size = int(user_input)
+        
+        if 5 <= size <= 20:
+            
+            config.size = size
+            config.size_rnd = False
+            return True
+    
+    except:
+        if user_input == "random": config.size_rnd = True; return True
+
+
+
+def valid_ra(config, user_input):
+    
+    try:
+        ra = float(user_input)
+        
+        if 5 <= ra <= 50:
+            
+            config.ra = ra
+            config.ri = ra / 3
+            config.ra_rnd = False
+            return True
+    
+    except:
+        if user_input == "random": config.ra_rnd = True; return True
+
+
+
+def valid_birth(config, user_input):
+    
+    try:
+        b_range = tuple(float(i) for i in user_input.strip("()").split(","))
+            
+        if len(b_range) != 2 or b_range[0] >= b_range[1]:
+            return False
+        
+        if all((0 <= val <= 1) for val in b_range):
+            
+            config.birth_range = b_range
+            config.birth_rnd = False
+            return True
+    
+    except:
+        if user_input == "random": config.birth_rnd = True; return True
+        
+
+
+def valid_survival(config, user_input):
+    
+    try:
+        s_range = tuple(float(i) for i in user_input.strip("()").split(","))
+            
+        if len(s_range) != 2 or s_range[0] >= s_range[1]:
+            return False
+        
+        if all((0 <= val <= 1) for val in s_range):
+            
+            config.survival_range = s_range
+            config.survival_rnd = False
+            return True
+    
+    except:
+        if user_input == "random": config.survival_rnd = True; return True
+        
+
+
+def valid_widths(config, user_input):
+    
+    try:
+        widths = tuple(float(i) for i in user_input.strip("()").split(","))
+            
+        if len(widths) != 2:
+            return False
+        
+        if 0 < widths[0] <= 0.2 and 0 < widths[1] <= 1:
+            
+            config.sigmoid_widths = widths
+            config.widths_rnd = False
+            return True
+    
+    except:
+        if user_input == "random": config.widths_rnd = True; return True
+
+
+
+def valid_fps(config, user_input):
+    
+    try:
+        fps_cap = int(user_input)
+        
+        if fps_cap >= 5:
+            
+            config.fps_cap = fps_cap
+            return True
+    
+    except: return False
+
+
+
+def valid_dt(config, user_input):
+    
+    try:
+        dt = float(user_input)
+        
+        if 0 < dt <= 1:
+            
+            config.dt = dt
+            return True
+    
+    except: return False
+    

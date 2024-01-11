@@ -60,6 +60,7 @@ class ECA():
             case "neumann": left = 0; right = -1
         
         
+        
         # loop through cells and get neighbourhood
         for i in range(len(cells)):
             
@@ -96,29 +97,34 @@ class ECA():
                                                       row * self.size,
                                                       self.size - self.grid_lines,
                                                       self.size - self.grid_lines))
+            
+    
+    
+    def check_rnd(self):
+        
+        # check for random variables or mystery box
+        if self.mb or self.rule_rnd: self.rule = f"{randint(0,255):08b}"                                                       # rule
+        if self.mb or self.size_rnd: self.size = randint(5,100)                                                                # size
+        if self.mb or self.boundary_rnd: self.boundary = choice(["periodic", "dirichlet 0", "dirichlet 1", "neumann"])         # boundary
+        if self.mb or self.cgrid_rnd: self.cgrid = (randint(0,255), randint(0,255), randint(0,255))                            # colour grid
+        if self.mb or self.coff_rnd: self.coff = (randint(0,255), randint(0,255), randint(0,255))                              # colour off
+        if self.mb or self.con_rnd: self.con = (randint(0,255), randint(0,255), randint(0,255))                                # colour on
+        if self.mb or self.start_indices_rnd: self.start_indices = [randint(0, self.width - 1) for _ in range(randint(1,4))]   # start indices
+        
+        # if start index not random, check if middle is set to true
+        elif self.start_indices_middle: self.start_indices = [self.width // 2]
     
     
     
     # run simulation
     def run(self):
         
+        # check for random variables or mystery box
+        self.check_rnd()
+        
         # update width and height
         self.width = self.window.width // self.size
         self.height = self.window.height // self.size
-        
-        # check for random variables or mystery box
-        if self.mb or self.rule_rnd: self.rule = f"{randint(0,255):08b}"                                                                # rule
-        if self.mb or self.size_rnd: self.size = randint(5,100)                                                                         # size
-        if self.mb or self.boundary_rnd: self.boundary = choice(["periodic", "dirichlet 0", "dirichlet 1", "neumann"])                  # boundary
-        if self.mb or self.cgrid_rnd: self.cgrid = (randint(0,255), randint(0,255), randint(0,255))                                     # colour grid
-        if self.mb or self.coff_rnd: self.coff = (randint(0,255), randint(0,255), randint(0,255))                                       # colour off
-        if self.mb or self.con_rnd: self.con = (randint(0,255), randint(0,255), randint(0,255))                                         # colour on
-        if self.mb or self.start_indices_rnd: self.start_indices = [randint(0, self.width - 1) for _ in range(randint(1,4))]       # start indices
-        
-        # if start index not random, check if middle is set to true
-        elif self.start_indices_middle: self.start_indices = [self.width // 2]
-        
-        
         
         # create grid
         cells = np.zeros((self.height, self.width), dtype=int)

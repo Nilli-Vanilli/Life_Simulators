@@ -22,7 +22,7 @@ def run_gol(config):
         rule_box := Input_Box(name="RULES:",
                               rect=(0.05 * x, 0.25 * y, 0.5 * x, 0.03 * y),
                               text=f"{config.rules}",
-                              error_message="rules should be a triple of ints between 0 and 8 st. rules[0] <= rules[1]"),   
+                              error_message="rules should be a triple of ints between 0 and 8 such that rules[0] <= rules[1]"),   
 
         size_box := Input_Box(name="SIZE:",
                               rect=(0.05 * x, 0.35 * y, 0.5 * x, 0.03 * y),
@@ -54,10 +54,10 @@ def run_gol(config):
                              text=f"{config.con}",
                              error_message="colour should be a triple of ints between 0 and 255, or a named colour"),
         
-        fps_box := Input_Box(name="FPS-CAP",
+        fps_box := Input_Box(name="FPS-CAP:",
                              rect=(0.68 * x, 0.7 * y, 0.1 * x, 0.03 * y),
                              text=f"{config.fps_cap}",
-                             error_message="fps cap should be an int greater than zero")                                             
+                             error_message="fps cap should be an int greater than five")                                             
         
         ]
 
@@ -170,18 +170,14 @@ def valid_rule(config, user_input):
         
         if len(rule) != 3 or rule[0] > rule[1]: return False
         
-        for val in rule:
-            if val < 0 or val > 8:
-                return False
+        if all((val in range(9)) for val in rule):
         
-        config.rules = rule
-        config.rule_rnd = False
-        return True
+            config.rules = rule
+            config.rule_rnd = False
+            return True
         
     except:  
-        
         if user_input == "random": config.rule_rnd = True; return True
-        else: return False
 
 
 
@@ -191,18 +187,13 @@ def valid_size(config, user_input):
         size = int(user_input)
         
         if 5 <= size <= 100:
-            config.size = size
             
+            config.size = size
             config.size_rnd = False
             return True
-                    
-        else: return False 
     
     except:
-        match user_input:
-            
-            case "random": config.size_rnd = True; return True
-            case _: return False 
+        if user_input == "random": config.size_rnd = True; return True
 
 
 
@@ -211,12 +202,12 @@ def valid_boundary(config, user_input):
     boundary_conditions = ("periodic", "dirichlet 0", "dirichlet 1", "neumann")
     
     if user_input in boundary_conditions:
+        
         config.boundary = user_input
         config.boundary_rnd = False
         return True
     
     elif user_input == "random": config.boundary_rnd = True; return True
-    else: return False # print("please enter one of the following boundary conditions:", *boundary_conditions, sep="\n")
 
 
 
@@ -226,12 +217,11 @@ def valid_fps_cap(config, user_input):
         fps_cap = int(user_input)
         
         if fps_cap >= 5:
+            
             config.fps_cap = fps_cap
             return True
-        
-        else: return False # print("fps cap should be an int greater than zero")
     
-    except: return False # print("fps cap should be an int greater than zero")
+    except: return False
 
 
 
@@ -240,12 +230,11 @@ def valid_colour(config, user_input, obj):
     try:
         colour = tuple(int(i) for i in user_input.strip("()").split(","))
         
-        if len(colour) != 3: return False # print("colour should be a triple of ints between 0 and 255")
+        if len(colour) != 3:
+            return False
         
-        for val in colour:
-            if val < 0 or val > 255:
-                # print("colour should be a triple of ints between 0 and 255")
-                return False
+        if not all((val in range(256)) for val in colour):
+            return False
         
         match obj:
             
@@ -270,5 +259,3 @@ def valid_colour(config, user_input, obj):
                 case "off": config.coff = pg.colordict.THECOLORS[user_input]; config.coff_rnd = False; return True
                 case "offnext": config.coff_next = pg.colordict.THECOLORS[user_input]; config.coff_next_rnd = False; return True
                 case "on": config.con = pg.colordict.THECOLORS[user_input]; config.con_rnd = False; return True
-        
-        else: return False # print("colour should be a surface followed by an rgb-triple")

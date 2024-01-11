@@ -1,7 +1,7 @@
-from classes.window import Window
 import pygame as pg
 import numpy as np
 from math import log
+from random import randint, choice, uniform
 
 
 
@@ -73,23 +73,6 @@ def antialiased_circle(size, radius):
 
 
 
-def get_multipliers(size, ri, ra):
-    
-    # get kernels
-    inner = antialiased_circle(size, ri)
-    outer = antialiased_circle(size, ra)
-    annulus = outer - inner
-    
-    # normalise kernels
-    inner /= np.sum(inner)
-    annulus /= np.sum(annulus)
-    
-    # get multipliers for kernel convolution
-    M = np.fft.fft2(inner)
-    N = np.fft.fft2(annulus)
-    
-    return M, N
-
 
 
 '''main'''
@@ -104,10 +87,24 @@ class SL():
     survival_range = (0.267, 0.445) # survival
     sigmoid_widths = (0.028, 0.147) # smoothstep
     
+    # multipliers
+    M = 0
+    N = 0
+    
     # RGB channels
     red = True
     green = True
     blue = True
+    
+    # random variables
+    mb = False
+    modes_rnd = True
+    types_rnd = False
+    size_rnd = False
+    ra_rnd = False
+    birth_rnd = False
+    survival_rnd = False
+    widths_rnd = False
     
     
     
@@ -126,8 +123,6 @@ class SL():
         self.sigtype = sigtype
         self.mixtype = mixtype
         self.stepmode = stepmode
-        
-        self.M, self.N = get_multipliers((self.height, self.width), self.ri, self.ra)
         
         self.dt = dt
         self.fps_cap = fps_cap
@@ -215,21 +210,40 @@ class SL():
     
     
     
-    def step(self, grid):
+    def get_multipliers(self):
+        
+        # get kernels
+        inner = antialiased_circle((self.height, self.width), self.ri)
+        outer = antialiased_circle((self.height, self.width), self.ra)
+        annulus = outer - inner
+        
+        # normalise kernels
+        inner /= np.sum(inner)
+        annulus /= np.sum(annulus)
+        
+        # get multipliers for kernel convolution
+        M = np.fft.fft2(inner)
+        N = np.fft.fft2(annulus)
+        
+        return M, N
+
+
+    
+    def step(self, grid, M, N):
 
         # convert grid to frequency domain
         grid_ = np.fft.fft2(grid)
         
         # multiply with kernel multipliers to apply convolution
-        M_ = grid_ * self.M
-        N_ = grid_ * self.N
+        M_ = grid_ * M
+        N_ = grid_ * N
         
         # convert back to spacial domain
-        M = np.real(np.fft.ifft2(M_))
-        N = np.real(np.fft.ifft2(N_))
+        m = np.real(np.fft.ifft2(M_))
+        n = np.real(np.fft.ifft2(N_))
 
         # Apply transition rules
-        grid = self.s(N, M, grid)
+        grid = self.s(n, m, grid)
         
         return grid
     
@@ -280,12 +294,30 @@ class SL():
     
     
     
+    def check_rnd(self):
+        
+        # check for random variables
+        if self.mb or self.modes_rnd: self.sigmode = randint(1,4); self.stepmode = randint(0,4)        # modes
+        if self.mb or self.types_rnd: self.sigtype = choice((0,1,4)); self.mixtype = choice((0,1,4))   # types
+        if self.mb or self.size_rnd: self.size = randint(5, 20)                                        # size
+        if self.mb or self.ra_rnd: self.ra = randint(5, 50 - 2 * self.size); self.ri = self.ra / 3     # outer radius
+        if self.mb or self.birth_rnd: self.birth_range = (a := uniform(0.1, 0.3), uniform(a, 1))       # birth range
+        if self.mb or self.survival_rnd: self.survival_range = (a := uniform(0.1, 0.3), uniform(a, 1)) # survival range
+        if self.mb or self.widths_rnd: self.sigmoid_widths = (uniform(0.025, 0.05), uniform(0.05, 0.3))  # sigmoid widths
+        
+    
     
     def run(self):
+        
+        # check for random variables
+        self.check_rnd()
         
         # update width and height
         self.width = self.window.width // self.size
         self.height = self.window.height // self.size
+        
+        # get multipliers
+        M, N = self.get_multipliers()
         
         # create grid
         grid = np.zeros((self.height, self.width))
@@ -299,7 +331,6 @@ class SL():
                 # window close button (when tabbed out)
                 if event.type == pg.QUIT:
                     running = not running
-                
                 
                 # get keypresses
                 if event.type == pg.KEYDOWN:
@@ -328,14 +359,13 @@ class SL():
             
             # compute next step
             if not paused:
-                grid = self.step(grid)
+                grid = self.step(grid, M, N)
             
             # draw grid
             self.draw_grid(grid)
             
             # update screen
-            self.window.update(self.fps_cap)
-            
+            self.window.update(self.fps_cap)         
             
         
     

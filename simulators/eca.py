@@ -64,10 +64,10 @@ def run_eca(config):
                              text=f"{config.con}",
                              error_message="colour should be a triple of ints between 0 and 255, or a named colour"),
         
-        fps_box := Input_Box(name="FPS-CAP",
+        fps_box := Input_Box(name="FPS-CAP:",
                              rect=(0.68 * x, 0.7 * y, 0.1 * x, 0.03 * y),
                              text=f"{config.fps_cap}",
-                             error_message="fps cap should be an int greater than zero")      
+                             error_message="fps cap should be an int greater than five")      
                                                
         ]
     
@@ -181,19 +181,13 @@ def valid_rule(config, user_input):
         else: rule = int(user_input)                            # decimal input
         
         if 0 <= rule <= 255:
+            
             config.rule = f"{rule:08b}"
-            
             config.rule_rnd = False
-            
             return True
-            
-        else: return False
     
     except:
-        match user_input:
-            
-            case "random": config.rule_rnd = True; return True
-            case _: return False
+        if user_input == "random": config.rule_rnd = True; return True
 
 
 
@@ -203,19 +197,13 @@ def valid_size(config, user_input):
         size = int(user_input)
         
         if 5 <= size <= 100:
+            
             config.size = size
-            
             config.size_rnd = False
-            
             return True
-                    
-        else: return False
     
     except:
-        match user_input:
-            
-            case "random": config.size_rnd = True; return True
-            case _: return False
+        if user_input == "random": config.size_rnd = True; return True
 
 
 
@@ -226,16 +214,13 @@ def valid_start(config, input_box):
     try:
         start_indices = [int(i) for i in user_input.strip("[]").split(",")]
         
-        for index in start_indices:
-            if abs(index) >= config.width // config.size:
-                input_box.error = f"start indices are out of range, max index: ± {config.width // config.size - 1}"
-                return False
+        if not all((abs(index) >= config.width // config.size) for index in start_indices):
+            input_box.error = f"start indices are out of range, max index: ± {config.width // config.size - 1}"
+            return False
             
         config.start_indices = start_indices
-        
         config.start_indices_rnd = False
         config.start_indices_middle = False
-        
         return True
     
     except:
@@ -252,12 +237,12 @@ def valid_boundary(config, user_input):
     boundary_conditions = ("periodic", "dirichlet 0", "dirichlet 1", "neumann")
     
     if user_input in boundary_conditions:
+        
         config.boundary = user_input
         config.boundary_rnd = False
         return True
     
     elif user_input == "random": config.boundary_rnd = True; return True
-    else: return False
     
     
     
@@ -266,11 +251,10 @@ def valid_fps_cap(config, user_input):
     try:
         fps_cap = int(user_input)
         
-        if fps_cap > 0:
+        if fps_cap >= 5:
+            
             config.fps_cap = fps_cap
             return True
-        
-        else: return False
     
     except: return False
 
@@ -283,9 +267,8 @@ def valid_colour(config, user_input, obj):
         
         if len(colour) != 3: return False
         
-        for val in colour:
-            if val < 0 or val > 255:
-                return False
+        if not all((val in range(256)) for val in colour):
+            return False
         
         match obj:
             
@@ -307,5 +290,3 @@ def valid_colour(config, user_input, obj):
                 case "grid": config.cgrid = pg.colordict.THECOLORS[user_input]; config.cgrid_rnd = False; return True
                 case "off": config.coff = pg.colordict.THECOLORS[user_input]; config.coff_rnd = False; return True
                 case "on": config.con = pg.colordict.THECOLORS[user_input]; config.con_rnd = False; return True
-        
-        else: return False  

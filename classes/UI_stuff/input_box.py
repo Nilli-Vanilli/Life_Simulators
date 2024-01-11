@@ -17,7 +17,7 @@ class Input_Box():
     
     # cursor index and time
     cursorindex = None
-    start_time = pg.time.get_ticks()
+    start_time = None
     
 
     
@@ -110,14 +110,14 @@ class Input_Box():
         
         # get estimate of index
         x -= text_rect.x # get position of mouse relative to text
-        idx = int(x / text_rect.w * len(self.text)) - scale # get ratio and multiply by amount of characters to find an estimate
+        index = int(x / text_rect.w * len(self.text)) - scale # get ratio and multiply by amount of characters to find an estimate
         
         # because width of characters is not uniform, get width of text slices of neighbouring indices
         # and find the one closest to the position of the mouse relative to the text, to adjust the index
-        diffs = [abs(self.get_text_width(self.text[:idx + i]) - x) for i in range(3 + scale)]
-        idx += diffs.index(min(diffs))
+        diffs = [abs(self.get_text_width(self.text[:index + i]) - x) for i in range(3 + scale)]
+        index += diffs.index(min(diffs))
         
-        self.cursorindex = idx
+        self.cursorindex = index
         
     
     

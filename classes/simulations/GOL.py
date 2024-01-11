@@ -107,13 +107,7 @@ class GOL():
     
     
     
-    def run(self):
-        
-        # update width and height
-        self.width = self.window.width // self.size
-        self.height = self.window.height // self.size
-        
-        
+    def check_rnd(self):
         
         # check for random variables or mystery box
         if self.mb or self.rule_rnd: self.rules = (a := randint(0,8),randint(a,8),randint(0,8))                          # rule
@@ -123,8 +117,16 @@ class GOL():
         if self.mb or self.coff_rnd: self.coff = (randint(0,255), randint(0,255), randint(0,255))                        # colour off
         if self.mb or self.coff_next_rnd: self.coff_next = (randint(0,255), randint(0,255), randint(0,255))              # colour off next gen
         if self.mb or self.con_rnd: self.con = (randint(0,255), randint(0,255), randint(0,255))                          # colour on
+    
+    
+    def run(self):
         
+        # check for random variables or mystery box
+        self.check_rnd()
         
+        # update width and height
+        self.width = self.window.width // self.size
+        self.height = self.window.height // self.size
         
         # create grid
         cells = np.zeros((self.height, self.width), dtype=int)

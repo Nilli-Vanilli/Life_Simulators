@@ -6,7 +6,7 @@ Todo:
 MAIN:
 exit screen
 nice colours and fonts
-dark mode (local)
+dark mode
 readme
 github
 paper
@@ -30,9 +30,6 @@ mystery box
 
 
 SMOOTHLIFE:
-randomisers
-input handling
-mystery box
 '''
 
 
