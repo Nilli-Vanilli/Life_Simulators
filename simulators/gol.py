@@ -155,6 +155,11 @@ def run_gol(config):
         
         # update screen
         config.window.update(fps=60)
+    
+    
+    
+    # reset mystery box
+    config.mb = False
 
 
 

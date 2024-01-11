@@ -252,7 +252,7 @@ class SL():
     def fill_rnd(self, grid):
         
         # create a few live cells in the grid, dependent on how large cells should be according to outer radius
-        for _ in range(self.width * self.height // ((self.ra * 2) ** 2)):
+        for _ in range(int(self.width * self.height / ((self.ra * 2) ** 2))):
             radius = int(self.ra)
             
             # get random position

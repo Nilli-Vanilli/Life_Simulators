@@ -115,7 +115,10 @@ class PL(Window):
                 
                 # if the mouse is within the specified range, create an attracting force between the mouse and the particle
                 if 0 < r < self.r_max:
-                    f = force(self.beta, r / self.r_max, -1)
+                    if pg.mouse.get_pressed()[0]:
+                        f = force(self.beta, r / self.r_max, 5)
+                    else:
+                        f = force(self.beta, r / self.r_max, -3)
 
                     # add force to total force
                     total_fx += rx / r * f

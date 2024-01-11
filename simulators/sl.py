@@ -198,6 +198,11 @@ def run_sl(config):
         
         # update screen
         config.window.update(fps=60)
+        
+        
+    
+    # reset mystery box
+    config.mb = False
     
     
     

@@ -94,3 +94,8 @@ def run_pl(config):
         
         # update screen
         config.window.update(fps=60)
+    
+    
+    
+    # reset mystery box
+    config.mb = False

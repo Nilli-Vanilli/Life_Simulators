@@ -4,9 +4,8 @@ Todo:
 
 
 MAIN:
-exit screen
 nice colours and fonts
-dark mode
+dark/random mode
 readme
 github
 paper
@@ -22,6 +21,7 @@ GOL:
 
 
 PL:
+fix garbage code
 randomisers
 input screen (matrix!!!)
 input handling
@@ -71,12 +71,16 @@ def main():
     sl_button = Button((0.75 * x, 0.75 * y, 0.45 * x, 0.1 * y), "SMOOTH LIFE")
     
     quit_button = Button((0.06 * x, 0.07 * y, 0.07 * x, 0.07 * y), "QUIT")
+    yes_button = Button((0.5 * x, 0.4 * y, 0.3 * x, 0.1 * y), "YES")
+    no_button = Button((0.5 * x, 0.6 * y, 0.3 * x, 0.1 * y), "NO")
     
     
     
     # running loop
     running = True
     while running:
+        
+        close = False
         
         for event in pg.event.get():
             
@@ -87,12 +91,14 @@ def main():
             # exit programme (escape)
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
-                    running = not running
+                    close = not close
                 
                     
         
         # draw background
         window.draw_bg()
+        
+        
         
         # draw title
         title.draw(window)
@@ -102,7 +108,7 @@ def main():
         
         # draw quit button
         if quit_button.draw(window):
-            running = False
+            close = True
         
         
         
@@ -134,15 +140,22 @@ def main():
         
         
         
+        # if quit button or escape is pressed, call exit screen
+        if close: # only call after everything else is drawn onto the screen
+            running = exit_screen(window)
+        
+        
+        
         # update screen
         window.update(fps=60)
+    
     
     
     # close programme
     pg.quit()
     
     
-
+    
 
 
 if __name__ == "__main__":
