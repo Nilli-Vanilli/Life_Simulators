@@ -156,6 +156,10 @@ class ECA():
                     # pause button (space)
                     elif event.key == pg.K_SPACE:
                         paused = not paused
+                    
+                    # randomise rule (r)
+                    elif event.key == pg.K_r:
+                        self.rule = f"{randint(0,255):08b}"
 
 
  

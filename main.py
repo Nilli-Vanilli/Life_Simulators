@@ -4,8 +4,6 @@ Todo:
 
 
 MAIN:
-nice colours and fonts
-dark/random mode
 readme
 github
 paper
@@ -71,8 +69,8 @@ def main():
     sl_button = Button((0.75 * x, 0.75 * y, 0.45 * x, 0.1 * y), "SMOOTH LIFE")
     
     quit_button = Button((0.06 * x, 0.07 * y, 0.07 * x, 0.07 * y), "QUIT")
-    yes_button = Button((0.5 * x, 0.4 * y, 0.3 * x, 0.1 * y), "YES")
-    no_button = Button((0.5 * x, 0.6 * y, 0.3 * x, 0.1 * y), "NO")
+    
+    theme_button = Button((0.94 * x, 0.07 * y, 0.07 * x, 0.07 * y), "DARK", hidden=True)
     
     
     
@@ -92,6 +90,10 @@ def main():
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     close = not close
+
+                elif event.key == pg.K_r:
+                    theme_button.hidden = True
+                    window.colours.rnd_colours()
                 
                     
         
@@ -109,6 +111,14 @@ def main():
         # draw quit button
         if quit_button.draw(window):
             close = True
+        
+        
+        
+        # draw theme button
+        if theme_button.draw(window):
+            theme_button.hidden = False
+            window.colours.toggle_dark_mode()
+            theme_button.text = "DARK" if window.colours.dark_mode else "LIGHT"
         
         
         

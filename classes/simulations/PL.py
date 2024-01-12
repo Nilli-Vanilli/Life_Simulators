@@ -157,6 +157,11 @@ class PL(Window):
         
     def run(self):
         
+        # reset variables
+        self.tree = QuadTree((0.5, 0.5), 1, 1)
+        
+        
+        
         # initialise random colours and positions for all particles
         for i in range(self.num_particles):
             
@@ -187,6 +192,10 @@ class PL(Window):
                     # pause button (space)
                     elif event.key == pg.K_SPACE:
                         paused = not paused
+                    
+                    # randomise rule matrix (r)
+                    elif event.key == pg.K_r:
+                        self.matrix = rnd_matrix(self.num_colours)
                 
                 
                     
