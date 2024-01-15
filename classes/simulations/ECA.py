@@ -160,6 +160,11 @@ class ECA():
                     # randomise rule (r)
                     elif event.key == pg.K_r:
                         self.rule = f"{randint(0,255):08b}"
+                    
+                # toggle cell state (left mouse)
+                elif pg.mouse.get_pressed()[0]:
+                    index = pg.mouse.get_pos()[0] // self.size
+                    cells[-1][index] = not cells[-1][index]
 
 
  

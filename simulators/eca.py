@@ -219,8 +219,8 @@ def valid_start(config, input_box):
     try:
         start_indices = [int(i) for i in user_input.strip("[]").split(",")]
         
-        if not all((abs(index) >= config.width // config.size) for index in start_indices):
-            input_box.error = f"start indices are out of range, max index: ± {config.width // config.size - 1}"
+        if not all((abs(index) < config.window.width // config.size) for index in start_indices):
+            input_box.error = f"start indices are out of range, max index: ± {config.window.width // config.size - 1}"
             return False
             
         config.start_indices = start_indices
@@ -233,6 +233,13 @@ def valid_start(config, input_box):
             
             case "random": config.start_indices_rnd = True; config.start_indices_middle = False; return True
             case "middle": config.start_indices_middle = True; config.start_indices_rnd = False; return True
+            
+            case "empty":
+                config.start_indices = []
+                config.start_indices_middle = False
+                config.start_indices_rnd = False; return True
+            case "[]": input_box.text = "empty"; return True
+            
             case _: input_box.error = "start indices should be a list of ints"; return False
         
     
