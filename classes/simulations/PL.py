@@ -38,7 +38,7 @@ class PL(Window):
     # background colour
     cbg = (10,10,10)
     
-    def __init__(self, window, matrix: np.ndarray, num_particles: int, size: int, fric_hl: float, r_max: float, beta: float, forcefactor: int, follow_mouse: bool, dt: float, fps_cap: int) -> None:
+    def __init__(self, window, matrix: np.ndarray, num_particles: int, size: int, fric_hl: float, r_max: float, beta: float, forcefactor: int, dt: float, fps_cap: int) -> None:
 
         self.window = window
         
@@ -50,7 +50,6 @@ class PL(Window):
         self.beta = beta
         self.forcefactor = forcefactor
         self.matrix = matrix
-        self.follow_mouse = follow_mouse
         self.dt = dt
         self.fps_cap = fps_cap
         
@@ -104,8 +103,8 @@ class PL(Window):
             
             
             
-            # if cells follow mouse 
-            if self.follow_mouse:
+            # detect if mouse is clicked
+            if any(click := pg.mouse.get_pressed()):
                 pos = pg.mouse.get_pos()
                 
                 # calculate euclidean distance between original particle and the mouse
@@ -113,17 +112,15 @@ class PL(Window):
                 ry = self.positions_y[i] - pos[1] / self.window.height
                 r = hypot(rx, ry)
                 
-                # if the mouse is within the specified range, create an attracting force between the mouse and the particle
-                if 0 < r < self.r_max:
-                    if pg.mouse.get_pressed()[0]:
-                        f = force(self.beta, r / self.r_max, 5)
-                    else:
-                        f = force(self.beta, r / self.r_max, -3)
+                # create a force between particle and mouse
+                if click[0]: # left mousebutton
+                    f = force(self.beta, r / self.r_max, -3)
+                else:  # right mousebutton
+                    f = force(self.beta, r / self.r_max, 5)
 
-                    # add force to total force
-                    total_fx += rx / r * f
-                    total_fy += ry / r * f
-            
+                # add force to total force
+                total_fx += rx / r * f
+                total_fy += ry / r * f
             
             
             # rescale total force by r_max (we normalise r when we calculate the force) and apply bonus force
@@ -154,6 +151,25 @@ class PL(Window):
             self.positions_y[i] %= 1
 
 
+    
+    def draw_particles(self):
+        
+       for i in range(self.num_particles):
+            
+            # get position on screen
+            x = self.positions_x[i] * self.window.width
+            y = self.positions_y[i] * self.window.height
+            
+            # determine colour, based on dim of matrix
+            colour = pg.Color(0,0,0); colour.hsla = (360 * self.colours[i] / self.num_colours, 100, 50, 100)
+            
+            # draw particle
+            pg.draw.circle(self.window.screen, colour,(x,y), self.size)
+            
+            # update tree
+            self.tree.insert((self.positions_x[i], self.positions_y[i])) 
+        
+        
         
     def run(self):
         
@@ -209,20 +225,8 @@ class PL(Window):
             # reset tree
             self.tree = QuadTree((0.5, 0.5), 1, 1)
             
-            
-            
             # draw particles
-            for i in range(self.num_particles):
-                
-                x = self.positions_x[i] * self.window.width
-                y = self.positions_y[i] * self.window.height
-                colour = pg.Color(0,0,0); colour.hsla = 360 * self.colours[i] / self.num_colours, 100, 50, 100
-                pg.draw.circle(self.window.screen, colour,(x,y), self.size)
-                
-                # update tree
-                self.tree.insert((self.positions_x[i], self.positions_y[i]))
-            
-            
+            self.draw_particles()
             
             # update screen
             self.window.update(self.fps_cap)

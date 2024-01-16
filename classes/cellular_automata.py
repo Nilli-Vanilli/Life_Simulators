@@ -28,7 +28,6 @@ class Cellular_Automata:
                      r_max=0.1,
                      beta=0.3,
                      forcefactor=20,
-                     follow_mouse=True,
                      dt=0.02,
                      fps_cap=60)
         

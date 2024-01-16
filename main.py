@@ -20,7 +20,6 @@ GOL:
 
 PL:
 fix garbage code
-mouse automatic, leftmouse to pull,  rightmouse to push
 randomisers
 input screen (matrix!!!)
 input handling
