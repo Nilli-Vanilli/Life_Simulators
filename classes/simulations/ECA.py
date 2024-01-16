@@ -103,16 +103,16 @@ class ECA():
     def check_rnd(self):
         
         # check for random variables or mystery box
-        if self.mb or self.rule_rnd: self.rule = f"{randint(0,255):08b}"                                                       # rule
-        if self.mb or self.size_rnd: self.size = randint(5,100)                                                                # size
-        if self.mb or self.boundary_rnd: self.boundary = choice(["periodic", "dirichlet 0", "dirichlet 1", "neumann"])         # boundary
-        if self.mb or self.cgrid_rnd: self.cgrid = (randint(0,255), randint(0,255), randint(0,255))                            # colour grid
-        if self.mb or self.coff_rnd: self.coff = (randint(0,255), randint(0,255), randint(0,255))                              # colour off
-        if self.mb or self.con_rnd: self.con = (randint(0,255), randint(0,255), randint(0,255))                                # colour on
-        if self.mb or self.start_indices_rnd: self.start_indices = [randint(0, self.width - 1) for _ in range(randint(1,4))]   # start indices
+        if self.mb or self.rule_rnd: self.rule = f"{randint(0,255):08b}"                                                                           # rule
+        if self.mb or self.size_rnd: self.size = randint(5,100)                                                                                    # size
+        if self.mb or self.boundary_rnd: self.boundary = choice(["periodic", "dirichlet 0", "dirichlet 1", "neumann"])                             # boundary
+        if self.mb or self.cgrid_rnd: self.cgrid = (randint(0,255), randint(0,255), randint(0,255))                                                # colour grid
+        if self.mb or self.coff_rnd: self.coff = (randint(0,255), randint(0,255), randint(0,255))                                                  # colour off
+        if self.mb or self.con_rnd: self.con = (randint(0,255), randint(0,255), randint(0,255))                                                    # colour on
+        if self.mb or self.start_indices_rnd: self.start_indices = [randint(0, self.window.width // self.size - 1) for _ in range(randint(1,4))]   # start indices
         
         # if start index not random, check if middle is set to true
-        elif self.start_indices_middle: self.start_indices = [self.width // 2]
+        elif self.start_indices_middle: self.start_indices = [self.window.width // (self.size * 2)]
     
     
     
@@ -164,7 +164,8 @@ class ECA():
                 # toggle cell state (left mouse)
                 elif pg.mouse.get_pressed()[0]:
                     index = pg.mouse.get_pos()[0] // self.size
-                    cells[-1][index] = not cells[-1][index]
+                    try: cells[-1][index] = not cells[-1][index]
+                    except: pass
 
 
  
