@@ -26,8 +26,8 @@ def rnd_matrix(n):
     
     matrix = np.random.rand(n,n)
     
-    for x in np.nditer(matrix):
-        x = 2 * x - 1
+    for row, col in np.ndindex(n,n):
+        matrix[row, col] = matrix[row, col] * 2 - 1
     
     return matrix
     
@@ -156,10 +156,17 @@ class PL(Window):
             # calculate dx and dy and add to positions
             self.positions_x[i] += self.velocities_x[i] * self.dt
             self.positions_y[i] += self.velocities_y[i] * self.dt
+    
+            # discourage cells from moving off screen
+            if self.positions_x[i] < 0.01: self.velocities_x[i] += 10 / self.forcefactor
+            elif self.positions_x[i] > 0.99: self.velocities_x[i] -= 10 / self.forcefactor
+            if self.positions_y[i] < 0.01: self.velocities_y[i] += 10 / self.forcefactor
+            elif self.positions_y[i] > 0.99: self.velocities_y[i] -= 10 / self.forcefactor
             
-            # make sure cells can't move offscreen
+            # teleport cells that do move off screen
             self.positions_x[i] %= 1
             self.positions_y[i] %= 1
+            
 
 
     

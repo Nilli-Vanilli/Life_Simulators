@@ -17,7 +17,8 @@ def run_pl(config):
     # create title
     title = Title(text="PARTICLE LIFE", pos=(0.5 * x, 0.1 * y), size=0.05 * x)
     
-    
+    # create input matrix
+    input_matrix = Input_Matrix(config.matrix, (0.2 * x, 0.2 * y, 0.4 * x, 0.4 * x))
     
     # create buttons
     run_button = Button((0.78 * x, 0.5 * y , 0.2 * x, 0.3 * y), "RUN!", font="Impact")
@@ -51,6 +52,12 @@ def run_pl(config):
                 # run sim (enter)
                 if event.key == pg.K_RETURN and all(validities):
                     config.run()
+                
+                elif event.key == pg.K_SPACE:
+                    input_matrix.add_dim()
+                
+                elif event.key == pg.K_BACKSPACE:
+                    input_matrix.remove_dim()
                      
         
         
@@ -58,7 +65,12 @@ def run_pl(config):
         config.window.draw_bg()
         
         # draw title
-        title.draw(config.window) 
+        title.draw(config.window)
+        
+        
+        
+        # draw input matrix
+        config.matrix = input_matrix.draw(config.window)
         
         
         
@@ -88,6 +100,9 @@ def run_pl(config):
         if mystery_button.draw(config.window):
             config.mb = not config.mb
             mystery_button.hidden = not mystery_button.hidden
+            
+            # lock input matrix
+            input_matrix.toggle_lock()
             
             '''
             # lock input boxes

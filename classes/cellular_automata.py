@@ -21,7 +21,7 @@ class Cellular_Automata:
         
         # Particle Life
         self.pl = PL(window=window,
-                     matrix=rnd_matrix(6),
+                     matrix=rnd_matrix(10),
                      num_particles=300,
                      size=3,
                      fric_hl=0.04,
