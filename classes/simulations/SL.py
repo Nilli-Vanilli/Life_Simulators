@@ -297,12 +297,12 @@ class SL():
     def check_rnd(self):
         
         # check for random variables
-        if self.mb or self.modes_rnd: self.sigmode = randint(1,4); self.stepmode = randint(0,4)        # modes
-        if self.mb or self.types_rnd: self.sigtype = choice((0,1,4)); self.mixtype = choice((0,1,4))   # types
-        if self.mb or self.size_rnd: self.size = randint(5, 20)                                        # size
-        if self.mb or self.ra_rnd: self.ra = randint(5, 50 - 2 * self.size); self.ri = self.ra / 3     # outer radius
-        if self.mb or self.birth_rnd: self.birth_range = (a := uniform(0.1, 0.3), uniform(a, 1))       # birth range
-        if self.mb or self.survival_rnd: self.survival_range = (a := uniform(0.1, 0.3), uniform(a, 1)) # survival range
+        if self.mb or self.modes_rnd: self.sigmode = randint(1,4); self.stepmode = randint(0,4)          # modes
+        if self.mb or self.types_rnd: self.sigtype = choice((0,1,4)); self.mixtype = choice((0,1,4))     # types
+        if self.mb or self.size_rnd: self.size = randint(5, 20)                                          # size
+        if self.mb or self.ra_rnd: self.ra = randint(5, 50 - 2 * self.size); self.ri = self.ra / 3       # outer radius
+        if self.mb or self.birth_rnd: self.birth_range = (a := uniform(0.1, 0.3), uniform(a, 1))         # birth range
+        if self.mb or self.survival_rnd: self.survival_range = (a := uniform(0.1, 0.3), uniform(a, 1))   # survival range
         if self.mb or self.widths_rnd: self.sigmoid_widths = (uniform(0.025, 0.05), uniform(0.05, 0.3))  # sigmoid widths
         
     

@@ -10,14 +10,19 @@ from classes import *
 
 def run_pl(config):
     
+    # position multipliers
+    x = config.window.width
+    y = config.window.height
+    
+    # create title
+    title = Title(text="PARTICLE LIFE", pos=(0.5 * x, 0.1 * y), size=0.05 * x)
     
     
     
-    
-     # create buttons
-    run_button = Button((600,500,200,200), "RUN!")
-    return_button = Button((50,50,100,50), "back")
-    mystery_button = Button((600,800,100,50), "mystery", hidden=True)
+    # create buttons
+    run_button = Button((0.78 * x, 0.5 * y , 0.2 * x, 0.3 * y), "RUN!", font="Impact")
+    return_button = Button((0.06 * x, 0.07 * y, 0.07 * x, 0.07 * y), "BACK")
+    mystery_button = Button((0.94 * x, 0.07 * y, 0.07 * x, 0.07 * y), "SECRET", hidden=True)
     
 
     
@@ -51,6 +56,9 @@ def run_pl(config):
         
         # draw background
         config.window.draw_bg()
+        
+        # draw title
+        title.draw(config.window) 
         
         
         

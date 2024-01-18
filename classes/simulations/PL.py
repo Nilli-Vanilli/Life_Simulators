@@ -1,7 +1,7 @@
 from classes.window import Window
 import pygame as pg
 import numpy as np
-from random import random, randint
+from random import random, randint, uniform
 from quads import QuadTree, BoundingBox
 from math import hypot
 
@@ -38,28 +38,39 @@ class PL(Window):
     # background colour
     cbg = (10,10,10)
     
+    # random variables
+    mb = False
+    num_particles_rnd = False
+    size_rnd = False
+    fric_hl_rnd = False # remove maybe???
+    r_max_rnd = False
+    forcefactor_rnd = False
+    
+    # other stuff
+    tree = None
+    friction = None
+    colours = None
+    num_colours = None
+    positions_x = None
+    positions_y = None
+    velocities_x = None
+    velocities_y = None
+    
+    
+    
     def __init__(self, window, matrix: np.ndarray, num_particles: int, size: int, fric_hl: float, r_max: float, beta: float, forcefactor: int, dt: float, fps_cap: int) -> None:
 
         self.window = window
         
+        self.matrix = matrix
         self.num_particles = num_particles
-        self.num_colours = matrix.shape[0]
         self.size = size
-        self.friction = 0.5 ** (dt / fric_hl)
+        self.fric_hl = fric_hl
         self.r_max = r_max
         self.beta = beta
         self.forcefactor = forcefactor
-        self.matrix = matrix
         self.dt = dt
         self.fps_cap = fps_cap
-        
-        self.colours = np.zeros(self.num_particles, dtype=int)
-        self.positions_x = np.zeros(self.num_particles)
-        self.positions_y = np.zeros(self.num_particles)
-        self.velocities_x = np.zeros(self.num_particles)
-        self.velocities_y = np.zeros(self.num_particles)
-        
-        self.tree = QuadTree((0.5,0.5), 1, 1)
       
     
     
@@ -152,6 +163,24 @@ class PL(Window):
 
 
     
+    def create_particles(self):
+        
+        # create arrays to store colour, position and velocity for all particles
+        self.colours = np.zeros(self.num_particles, dtype=int)
+        self.positions_x = np.zeros(self.num_particles)
+        self.positions_y = np.zeros(self.num_particles)
+        self.velocities_x = np.zeros(self.num_particles)
+        self.velocities_y = np.zeros(self.num_particles)
+        
+        # initialise random colours and positions for all particles
+        for i in range(self.num_particles):
+            
+            self.colours[i] = randint(0, self.num_colours - 1)
+            self.positions_x[i] = random()
+            self.positions_y[i] = random()
+            
+            
+    
     def draw_particles(self):
         
        for i in range(self.num_particles):
@@ -169,23 +198,33 @@ class PL(Window):
             # update tree
             self.tree.insert((self.positions_x[i], self.positions_y[i])) 
         
+    
+    
+    def check_rnd(self):
+        
+        if self.mb: self.matrix = rnd_matrix(randint(1,10))
+        if self.mb or self.num_particles_rnd: self.num_particles = randint(50,500)
+        if self.mb or self.size_rnd: self.size = randint(1,10)
+        if self.mb or self.fric_hl_rnd: self.fric_hl = uniform(0.001, 0.1)
+        if self.mb or self.r_max_rnd: self.r_max = uniform(0.05,0.15)
+        if self.mb or self.forcefactor_rnd: self.forcefactor = randint(5,40)
+        
         
         
     def run(self):
         
-        # reset variables
+        # check for random variables or mystery box
+        self.check_rnd()
+        
+        # update friction and number of colours (particle types)
+        self.friction = 0.5 ** (self.dt / self.fric_hl)
+        self.num_colours = self.matrix.shape[0]
+        
+        # create quadtree and friction
         self.tree = QuadTree((0.5, 0.5), 1, 1)
         
-        
-        
-        # initialise random colours and positions for all particles
-        for i in range(self.num_particles):
-            
-            self.colours[i] = randint(0, self.num_colours - 1)
-            self.positions_x[i] = random()
-            self.positions_y[i] = random()
-        
-        
+        # create particles
+        self.create_particles()
         
         # running loop
         paused = False

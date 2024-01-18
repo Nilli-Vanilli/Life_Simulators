@@ -19,9 +19,8 @@ GOL:
 
 
 PL:
-fix garbage code
-randomisers
-input screen (matrix!!!)
+matrix input
+input screen
 input handling
 mystery box
 

@@ -77,6 +77,7 @@ def run_sl(config):
     return_button = Button((0.06 * x, 0.07 * y, 0.07 * x, 0.07 * y), "BACK")
     mystery_button = Button((0.94 * x, 0.07 * y, 0.07 * x, 0.07 * y), "SECRET", hidden=True)
     
+    # rgb channel buttons
     red_button = Button((0.68 * x, 0.82 * y, 0.07 * x, 0.07 * x), "R")
     green_button = Button((0.78 * x, 0.82 * y, 0.07 * x, 0.07 * x), "G")
     blue_button = Button((0.88 * x, 0.82 * y, 0.07 * x, 0.07 * x), "B")
