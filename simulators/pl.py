@@ -114,7 +114,7 @@ def run_pl(config):
         fps_box.valid = valid_fps(config, fps_box.text.lower()) # allowed to change during mb
         dt_box.valid = valid_dt(config, dt_box.text.lower()) # allowed to change during mb
         
-        validities = [True]
+        validities = [box.valid for box in boxes]
         
         
         
