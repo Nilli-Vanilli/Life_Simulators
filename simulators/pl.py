@@ -18,12 +18,51 @@ def run_pl(config):
     title = Title(text="PARTICLE LIFE", pos=(0.5 * x, 0.1 * y), size=0.05 * x)
     
     # create input matrix
-    input_matrix = Input_Matrix(config.matrix, (0.2 * x, 0.2 * y, 0.4 * x, 0.4 * x))
+    input_matrix = Input_Matrix(config.matrix, (0.07 * x, 0.25 * y, 0.4 * x, 0.4 * x))
+    
+    # create input boxes
+    boxes = [
+        
+        num_particles_box := Input_Box(name="NUMBER OF PARTICLES:",
+                                       rect=(0.51 * x, 0.72 * y, 0.17 * x, 0.03 * y),
+                                       text=f"{config.num_particles}",
+                                       error_message="number of particles should be an int greater than zero"),
+        
+        size_box := Input_Box(name="SIZE:",
+                              rect=(0.51 * x, 0.82 * y, 0.17 * x, 0.03 * y),
+                              text=f"{config.size}",
+                              error_message="size should be an int greater than one"),
+        
+        r_max_box := Input_Box(name="RANGE:",
+                               rect=(0.72 * x, 0.72 * y, 0.17 * x, 0.03 * y),
+                               text=f"{round(config.r_max, 3)}",
+                               error_message="range should be a float greater than zero"),
+        
+        forcefactor_box := Input_Box(name="FORCE FACTOR:",
+                                     rect=(0.72 * x, 0.82 * y, 0.17 * x, 0.03 * y),
+                                     text=f"{config.forcefactor}",
+                                     error_message="force factor should be an int greater than zero"),
+        
+        fps_box := Input_Box(name="FPS-CAP:",
+                             rect=(0.67 * x, 0.6 * y, 0.1 * x, 0.03 * y),
+                             text=f"{config.fps_cap}",
+                             error_message="fps cap should be an int greater than five"),
+        
+        dt_box := Input_Box(name="DT:",
+                            rect=(0.79 * x, 0.6 * y, 0.1 * x, 0.03 * y),
+                            text=f"{config.dt * 10}",
+                            error_message="dt should be a float between zero and one")
+    ]
     
     # create buttons
-    run_button = Button((0.78 * x, 0.5 * y , 0.2 * x, 0.3 * y), "RUN!", font="Impact")
+    run_button = Button((0.78 * x, 0.395 * y , 0.2 * x, 0.3 * y), "RUN!", font="Impact")
     return_button = Button((0.06 * x, 0.07 * y, 0.07 * x, 0.07 * y), "BACK")
     mystery_button = Button((0.94 * x, 0.07 * y, 0.07 * x, 0.07 * y), "SECRET", hidden=True)
+    
+    # matrix buttons
+    add_button = Button((0.52 * x, 0.29 * y, 0.08 * y, 0.08 * y), "+", font="Impact")
+    remove_button = Button((0.52 * x, 0.405 * y, 0.08 * y, 0.08 * y), "-", font="Impact")
+    randomise_button = Button((0.52 * x, 0.52 * y, 0.08 * y, 0.08 * y), "RND")
     
 
     
@@ -52,12 +91,6 @@ def run_pl(config):
                 # run sim (enter)
                 if event.key == pg.K_RETURN and all(validities):
                     config.run()
-                
-                elif event.key == pg.K_SPACE:
-                    input_matrix.add_dim()
-                
-                elif event.key == pg.K_BACKSPACE:
-                    input_matrix.remove_dim()
                      
         
         
@@ -67,15 +100,27 @@ def run_pl(config):
         # draw title
         title.draw(config.window)
         
-        
-        
         # draw input matrix
         config.matrix = input_matrix.draw(config.window)
         
         
         
         # temp validities
+        num_particles_box.valid = True
+        size_box.valid = True
+        r_max_box.valid = True
+        forcefactor_box.valid = True
+        
+        fps_box.valid = valid_fps(config, fps_box.text.lower()) # allowed to change during mb
+        dt_box.valid = valid_dt(config, dt_box.text.lower()) # allowed to change during mb
+        
         validities = [True]
+        
+        
+        
+        # draw boxes
+        for box in boxes:
+            box.draw(config.window, key)
         
         
         
@@ -104,14 +149,25 @@ def run_pl(config):
             # lock input matrix
             input_matrix.toggle_lock()
             
-            '''
             # lock input boxes
             for box in boxes:
                 box.toggle_lock("MYSTERY BOX!!!")
             
-            # unlock FPS cap
+            # unlock FPS cap and dt
             fps_box.toggle_lock(None)
-            '''
+            dt_box.toggle_lock(None)
+        
+        
+        
+        # draw matrix buttons
+        if add_button.draw(config.window):
+            input_matrix.add_dim()
+        
+        if remove_button.draw(config.window):
+            input_matrix.remove_dim()
+            
+        if randomise_button.draw(config.window) and not input_matrix.locked:
+            input_matrix.matrix = rnd_matrix(input_matrix.dim)
         
         
         
@@ -122,3 +178,35 @@ def run_pl(config):
     
     # reset mystery box
     config.mb = False
+    
+    
+
+
+
+'''input handeling'''
+
+def valid_fps(config, user_input):
+    
+    try:
+        fps_cap = int(user_input)
+        
+        if fps_cap >= 5:
+            
+            config.fps_cap = fps_cap
+            return True
+    
+    except: return False
+
+
+
+def valid_dt(config, user_input):
+    
+    try:
+        dt = float(user_input)
+        
+        if 0 < dt <= 1:
+            
+            config.dt = dt / 10
+            return True
+    
+    except: return False

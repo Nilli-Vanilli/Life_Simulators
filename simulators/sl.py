@@ -42,22 +42,22 @@ def run_sl(config):
         
         ra_box := Input_Box(name="OUTER RADIUS:",
                             rect=(0.05 * x, 0.55 * y, 0.5 * x, 0.03 * y),
-                            text=f"{config.ra}",
+                            text=f"{round(config.ra, 3)}",
                             error_message="outer radius should be a float between 5 and 50"),
         
         birth_box := Input_Box(name="BIRTH RANGE:",
                                rect=(0.05 * x, 0.65 * y, 0.5 * x, 0.03 * y),
-                               text=f"{config.birth_range}",
+                               text=f"{tuple(round(a, 3) for a in config.birth_range)}",
                                error_message="birth range should be a pair of floats between 0 and 1 such that range[0] < range[1]"),  
         
         survival_box := Input_Box(name="SURVIVAL RANGE:",
                                   rect=(0.05 * x, 0.75 * y, 0.5 * x, 0.03 * y),
-                                  text=f"{config.survival_range}",
+                                  text=f"{tuple(round(a, 3) for a in config.survival_range)}",
                                   error_message="survival range should be a pair of floats between 0 and 1 such that range[0] < range[1]"),
         
         widths_box := Input_Box(name="SIGMOID WIDTHS:",
                                 rect=(0.05 * x, 0.85 * y, 0.5 * x, 0.03 * y),
-                                text=f"{config.sigmoid_widths}",
+                                text=f"{tuple(round(a, 3) for a in config.sigmoid_widths)}",
                                 error_message="sigmoid widths should be a pair of floats such that 0 < widths[0] <= 0.2 and 0 < widths[1] <= 1"),                                     
         
         fps_box := Input_Box(name="FPS-CAP:",
@@ -68,7 +68,7 @@ def run_sl(config):
         dt_box := Input_Box(name="DT:",
                             rect=(0.79 * x, 0.6 * y, 0.1 * x, 0.03 * y),
                             text=f"{config.dt}",
-                            error_message="dt should be a float")
+                            error_message="dt should be a float between 0 and 1")
         
         ]
     

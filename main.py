@@ -19,10 +19,7 @@ GOL:
 
 
 PL:
-matrix input
-input screen
 input handling
-mystery box
 
 
 

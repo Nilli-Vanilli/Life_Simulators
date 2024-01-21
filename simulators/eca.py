@@ -1,12 +1,3 @@
-'''
-Todo:
-
-make input screen look nice
-error messages
-'''
-
-
-
 '''imports'''
 
 import pygame as pg

@@ -83,16 +83,6 @@ class Input_Matrix:
             elif pg.mouse.get_pressed()[2]:
                 if self.matrix[relative_pos] > -0.98:
                     self.matrix[relative_pos] -= 0.02
-                
-        
-        
-    
-    def shade_grid(self, window):
-        
-        pg.draw.line(window.screen, window.colours.shade_pos, (self.x, self.y), (self.x + self.width, self.y), 2)
-        pg.draw.line(window.screen, window.colours.shade_pos, (self.x, self.y), (self.x, self.y + self.height), 2)
-        pg.draw.line(window.screen, window.colours.shade_neg, (self.x, self.y + self.height), (self.x + self.width, self.y + self.height), 2)
-        pg.draw.line(window.screen, window.colours.shade_neg, (self.x + self.width, self.y), (self.x + self.width, self.y + self.height), 2)
         
     
     
@@ -135,12 +125,12 @@ class Input_Matrix:
         coord = (randint(0,self.dim - 1), randint(0,self.dim - 1))
         
         # if number of elapsed seconds is uneven, increase element if possible
-        if (pg.time.get_ticks()//1000) % 2 and self.matrix[coord] < 0.9:
-            self.matrix[coord] += 0.1
+        if (pg.time.get_ticks()//1000) % 2 and self.matrix[coord] <= 0.8:
+            self.matrix[coord] += 0.2
         
         # otherwise decrease if possible
-        elif self.matrix[coord] > -0.9:
-            self.matrix[coord] -= 0.1
+        elif self.matrix[coord] >= -0.8:
+            self.matrix[coord] -= 0.2
     
     
     
@@ -161,9 +151,6 @@ class Input_Matrix:
         
         # draw coloured balls
         self.draw_colourballs(window.screen)
-        
-        # add shading to grid
-        self.shade_grid(window)
         
         # if matrix not locked, allow user input
         if not self.locked:

@@ -42,7 +42,6 @@ class PL(Window):
     mb = False
     num_particles_rnd = False
     size_rnd = False
-    fric_hl_rnd = False # remove maybe???
     r_max_rnd = False
     forcefactor_rnd = False
     
@@ -212,7 +211,6 @@ class PL(Window):
         if self.mb: self.matrix = rnd_matrix(randint(1,10))
         if self.mb or self.num_particles_rnd: self.num_particles = randint(50,500)
         if self.mb or self.size_rnd: self.size = randint(1,10)
-        if self.mb or self.fric_hl_rnd: self.fric_hl = uniform(0.001, 0.1)
         if self.mb or self.r_max_rnd: self.r_max = uniform(0.05,0.15)
         if self.mb or self.forcefactor_rnd: self.forcefactor = randint(5,40)
         
