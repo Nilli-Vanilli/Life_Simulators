@@ -13,11 +13,8 @@ def force(beta, r, a):
     if r < beta: # make sure particles dont get too close to one another
         return r / beta - 1
     
-    elif beta < r < 1: # if particle in range, calculate force
+    else:
         return a * (1 - abs(2 * r - 1 - beta) / (1 - beta))
-    
-    else: # if particle not in range, no force
-        return 0
     
 
 
@@ -73,53 +70,48 @@ class PL(Window):
       
     
     
-    def apply_boundary(self, i, points):
+    def get_neighbours(self, x, y):
         
-        # left wrap
-        if self.positions_x[i] < self.r_max:
-            
-            bb = BoundingBox(1 - self.r_max + self.positions_x[i],
-                                self.positions_y[i] - self.r_max, 1,
-                                self.positions_y[i] + self.r_max)
+        # find all particles in range of the specified position
+        bb = BoundingBox(x - self.r_max, y - self.r_max,
+                         x + self.r_max, y + self.r_max)
+        
+        neighbours = self.tree.within_bb(bb)
+        
+        # apply periodic boundary condition
+        if x < self.r_max: # left wrap
+            bb = BoundingBox(1 - self.r_max + x, y - self.r_max,
+                             1, y + self.r_max)
 
-            points += self.tree.within_bb(bb)
+            neighbours += self.tree.within_bb(bb)
         
-        # right wrap
-        elif self.positions_x[i] > 1 - self.r_max:
+        elif x > 1 - self.r_max: # right wrap
+            bb = BoundingBox(0, y - self.r_max,
+                             self.r_max - 1 + x, y + self.r_max)
             
-            bb = BoundingBox(0, self.positions_y[i] - self.r_max,
-                                self.r_max - 1 + self.positions_x[i],
-                                self.positions_y[i] + self.r_max)
-            
-            points += self.tree.within_bb(bb)
+            neighbours += self.tree.within_bb(bb)
         
-        # down wrap
-        if self.positions_y[i] < self.r_max:
+        if y < self.r_max: # down wrap
+            bb = BoundingBox(x - self.r_max, 1 - self.r_max + y,
+                             x + self.r_max, 1)
             
-            bb = BoundingBox(self.positions_x[i] - self.r_max,
-                                1 - self.r_max + self.positions_y[i],
-                                self.positions_x[i] + self.r_max, 1)
-            
-            points += self.tree.within_bb(bb)
+            neighbours += self.tree.within_bb(bb)
         
-        # up wrap
-        elif self.positions_y[i] > 1 - self.r_max:
+        elif y > 1 - self.r_max: # up wrap
+            bb = BoundingBox(x - self.r_max,0,
+                                x + self.r_max, self.r_max - 1 + y)
             
-            bb = BoundingBox(self.positions_x[i] - self.r_max,0,
-                                self.positions_x[i] + self.r_max,
-                                self.r_max - 1 + self.positions_y[i])
+            neighbours += self.tree.within_bb(bb)
+        
+        return neighbours
             
-            points += self.tree.within_bb(bb)
-        
-        return points
-    
-        
+            
     
     def particles_effect(self, i, points):
         
         # return values
-        add_x = 0
-        add_y = 0
+        fx = 0
+        fy = 0
         
         # loop through the neighbouring particles
         for point in points:
@@ -127,7 +119,7 @@ class PL(Window):
             # find the index value of the particle
             j = np.where((self.positions_x == point.x) & (self.positions_y == point.y))[0][0]
             
-            if j == i: continue # ignore the original particle
+            if j == i: continue # ignore the original particle itself
             
             # find euclidean distance between the original particle and the neighbour
             rx = self.positions_x[j] - self.positions_x[i]
@@ -142,20 +134,19 @@ class PL(Window):
             r = hypot(rx, ry)
             
             # if the particle is within the specified range, calculate the force between them, dependent on the rule matrix
-            if 0 < r < self.r_max:
-                
+            if r < self.r_max:
                 f = force(self.beta, r / self.r_max, self.matrix[self.colours[i], self.colours[j]])
                 
                 # add force to total force acting on the original particle
-                add_x += rx / r * f
-                add_y += ry / r * f
+                fx += rx / r * f
+                fy += ry / r * f
         
-        return add_x, add_y
+        return fx, fy
     
     
     
     def mouse_effect(self, i, click):
-        
+    
         # return values
         add_x = 0
         add_y = 0
@@ -175,11 +166,15 @@ class PL(Window):
         
         r = hypot(rx, ry)
         
-        # create a force between particle and mouse
-        if click[0]: # left mousebutton
-            f = force(self.beta, r / self.r_max, -3)
-        else:  # right mousebutton
-            f = force(self.beta, r / self.r_max, 5)
+        # if mouse in range, create a force between particle and mouse
+        if r < self.r_max:
+            if click[0]: # left mousebutton
+                f = force(self.beta, r / self.r_max, -3)
+            else:  # right mousebutton
+                f = force(self.beta, r / self.r_max, 5)
+        
+        # if mouse not in range, don't add force
+        else: return 0, 0
 
         # add force to total force
         add_x += rx / r * f
@@ -191,7 +186,7 @@ class PL(Window):
     
     def calculate_velocity(self, i, fx, fy):
         
-        # rescale total force by r_max (we normalise r when we calculate the force)
+        # rescale force by r_max (we normalise r when we calculate the force)
         # and apply bonus force
         fx *= self.r_max * self.forcefactor
         fy *= self.r_max * self.forcefactor
@@ -211,38 +206,26 @@ class PL(Window):
         # loop through all particles
         for i in range(self.num_particles):
             
-            # initialise force
-            total_fx = 0
-            total_fy = 0
+            # store particle position
+            x = self.positions_x[i]
+            y = self.positions_y[i]
             
             # find all particles in range of the particle
-            bb = BoundingBox(self.positions_x[i] - self.r_max,
-                             self.positions_y[i] - self.r_max,
-                             self.positions_x[i] + self.r_max,
-                             self.positions_y[i] + self.r_max)
-            
-            points = self.tree.within_bb(bb)
-            
-            # periodic boundary condition
-            points = self.apply_boundary(i, points)
+            neighbours = self.get_neighbours(x, y)
                     
             # calculate effect of neighbouring particles on particle
-            add_x, add_y = self.particles_effect(i, points)
-            
-            total_fx += add_x
-            total_fy += add_y
+            fx, fy = self.particles_effect(i, neighbours)
             
             # detect if mouse is clicked and store which button
             if any(click := pg.mouse.get_pressed()):
                 
                 # calculate effect of mouse on particle
                 add_x, add_y = self.mouse_effect(i, click)
+                fx += add_x
+                fy += add_y
                 
-                total_fx += add_x
-                total_fy += add_y
-                
-            # calculate velocities
-            self.calculate_velocity(i, total_fx, total_fy)
+            # calculate velocity
+            self.calculate_velocity(i, fx, fy)
             
     
     
@@ -281,7 +264,8 @@ class PL(Window):
     
     def draw_particles(self):
         
-       for i in range(self.num_particles):
+        # loop through all particles
+        for i in range(self.num_particles):
             
             # get position on screen
             x = self.positions_x[i] * self.window.width
@@ -317,7 +301,7 @@ class PL(Window):
         self.friction = 0.5 ** (self.dt / self.fric_hl)
         self.num_colours = self.matrix.shape[0]
         
-        # create quadtree and friction
+        # create quadtree
         self.tree = QuadTree((0.5, 0.5), 1, 1)
         
         # create particles
