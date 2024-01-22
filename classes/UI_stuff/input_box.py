@@ -15,9 +15,9 @@ class Input_Box():
     text_len = 0
     text_height = 0
     
-    # cursor index and time
+    # cursor index and timer
     cursorindex = None
-    start_time = None
+    timer = None
     
 
     
@@ -59,6 +59,7 @@ class Input_Box():
     
     def colours(self, active: tuple, hover: tuple, inactive: tuple, invalid: tuple, text: tuple):
         
+        # set new colours and lock them
         self.colours.input_active = active
         self.colours.input_hover = hover
         self.colours.input_inactive = inactive
@@ -70,10 +71,12 @@ class Input_Box():
     
     def toggle_lock(self, text: str):
         
+        # if locked, unlock and get stored text
         if self.lock:
             self.text = self.lock
             self.lock = False
         
+        # if unlocked, lock and store current text
         else:
             self.lock = self.text
             self.text = text
@@ -95,6 +98,7 @@ class Input_Box():
         
     def get_text_width(self, text):
         
+        # render text and get its width on the screen
         text = self.font.render(text, True, self.colours.input_text)
         rect = text.get_rect()
         width = rect.w
@@ -134,27 +138,25 @@ class Input_Box():
         y = self.y + self.height // 2 - self.text_height // 2
         
         # create bool that inverts every half second and only draw cursor when it is true
-        if ((pg.time.get_ticks() - self.start_time)//500 + 1) % 2:
+        if ((pg.time.get_ticks() - self.timer)//500 + 1) % 2:
             pg.draw.line(screen, self.colours.input_cursor, (x,y), (x,y + self.text_height - 2), 3)
         
         
     
     def check_mouseover(self, input_rect, text_rect):
         
-        # check if mouse is clicked
-        clicked = pg.mouse.get_pressed()[0]
-        
-        # get mouse position
+        # get mouse position and check if left mousebutton is clicked
         pos = pg.mouse.get_pos()
+        click = pg.mouse.get_pressed()[0]
         
         # check if mouse is hovering over box
         if input_rect.collidepoint(pos):
             self.hover = True
             
             # if mouse is clicked activate box
-            if clicked:
+            if click:
                 self.active = True
-                self.start_time = pg.time.get_ticks() # reset timer for cursor (so it gets drawn)
+                self.timer = pg.time.get_ticks() # reset timer for cursor (so it gets drawn)
                 
                 # if text is clicked, update cursor index
                 if text_rect.collidepoint(pos):
@@ -164,7 +166,7 @@ class Input_Box():
                 else: self.cursorindex = len(self.text)
                     
         # if mouse is clicked outside of box, deactivate it
-        elif clicked:
+        elif click:
             self.active = False
         
         # if mouse is not hovering over box
@@ -172,13 +174,13 @@ class Input_Box():
         
     
     
-    def active_mode(self, screen, event):
+    def active_mode(self, screen, key):
         
         # check if a key was pressed
-            if event:
+            if key:
                 
                 # if backspace:
-                if event.key == pg.K_BACKSPACE:
+                if key.key == pg.K_BACKSPACE:
                     
                     # check if there is text in the box and the cursor is not all the way to the left
                     if len(self.text) + self.cursorindex > 0:
@@ -188,20 +190,21 @@ class Input_Box():
                         self.cursorindex -= 1
                 
                 # if left arrow, move cursor index left if possible
-                elif event.key == pg.K_LEFT and self.cursorindex > 0:
+                elif key.key == pg.K_LEFT and self.cursorindex > 0:
                     self.cursorindex -= 1
                 
                 # if right arrow, move cursor index right if possible
-                elif event.key == pg.K_RIGHT and self.cursorindex < len(self.text):
+                elif key.key == pg.K_RIGHT and self.cursorindex < len(self.text):
                     self.cursorindex += 1
                 
-                # ignore these inputs
-                elif event.key in [pg.K_RETURN, pg.K_LSHIFT, pg.K_RSHIFT, pg.K_LCTRL, pg.K_RCTRL, pg.K_CAPSLOCK]: 
+                # ignore these inputs (don't add empty character)
+                elif key.key in [pg.K_RETURN, pg.K_LSHIFT, pg.K_RSHIFT, pg.K_LCTRL, pg.K_RCTRL, pg.K_CAPSLOCK]: 
                     pass
                     
-                # if not backspace or enter, add character in front of cursor and increase the cursor index
+                # if user inputs character and box is not full,
+                # add character in front of cursor and increase the cursor index
                 elif self.text_len <= self.width - 15:
-                    self.text = self.text[:self.cursorindex] + event.unicode + self.text[self.cursorindex:]
+                    self.text = self.text[:self.cursorindex] + key.unicode + self.text[self.cursorindex:]
                     self.cursorindex += 1
                   
             # draw cursor
@@ -234,7 +237,7 @@ class Input_Box():
         
         
     
-    def draw(self, window, event):
+    def draw(self, window, key):
         
         # reset colours and fonts
         if not self.lock_colour:
@@ -242,6 +245,7 @@ class Input_Box():
         if not self.lock_font:
             self.fonts = window.fonts
         
+        # reset text images
         text_img, name_img, error_img = self.reset()
 
         # update text size
@@ -254,9 +258,9 @@ class Input_Box():
         # check mouseover
         self.check_mouseover(input_rect, text_rect)
         
-        # if box is active and not locked, allow user to adjust text
+        # if box is active and not locked, allow user to input text
         if self.active and not self.lock:
-            self.active_mode(window.screen, event)
+            self.active_mode(window.screen, key)
             
         # get colour
         colour = self.get_colour()

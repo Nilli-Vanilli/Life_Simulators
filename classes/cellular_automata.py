@@ -1,5 +1,6 @@
 from classes.simulations import *
 
+# these are all the preset configurations of the simulations
 class Cellular_Automata:
     
     def __init__(self, window) -> None:

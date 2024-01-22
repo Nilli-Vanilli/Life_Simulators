@@ -110,8 +110,8 @@ def run_pl(config):
         size_box.valid = True if config.mb else valid_size(config, size_box.text.lower())                  # particle size
         r_max_box.valid = True if config.mb else valid_range(config, r_max_box.text.lower())               # range
         forcefactor_box.valid = True if config.mb else valid_force(config, forcefactor_box.text.lower())   # force factor
-        fps_box.valid = valid_fps(config, fps_box.text.lower()) # allowed to change during mb
-        dt_box.valid = valid_dt(config, dt_box.text.lower()) # allowed to change during mb
+        fps_box.valid = valid_fps(config, fps_box.text.lower()) # allowed to change during mb              # fps cap
+        dt_box.valid = valid_dt(config, dt_box.text.lower()) # allowed to change during mb                 # dt
         
         validities = [box.valid for box in boxes]
         

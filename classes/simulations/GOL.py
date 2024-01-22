@@ -1,4 +1,3 @@
-from classes.window import Window
 import pygame as pg
 from random import randint, choice
 import numpy as np
@@ -41,7 +40,7 @@ class GOL():
     
     def update_grid(self, cells, paused=False):
         
-        # store next generation
+        # initialise next generation
         updated_cells = np.zeros((cells.shape[0], cells.shape[1]), dtype=int)
         
         # apply boundary condition
@@ -131,8 +130,6 @@ class GOL():
         # create grid
         cells = np.zeros((self.height, self.width), dtype=int)
         
-        
-        
         #running loop
         paused = True
         running = True
@@ -142,7 +139,6 @@ class GOL():
                 # window close button (when tabbed out)
                 if event.type == pg.QUIT:
                     running = not running
-                
                 
                 # get keypresses
                 elif event.type == pg.KEYDOWN:
@@ -159,16 +155,11 @@ class GOL():
                     elif event.key == pg.K_r:
                         cells = self.fill_rnd(cells)
                     
-                    
-                # place cell in grid (left mousebutton)
-                if pg.mouse.get_pressed()[0]:
-                    pos = pg.mouse.get_pos()
-                    cells[pos[1] // self.size, pos[0] // self.size] = 1
-                
-                # remove cell from grid (right mousebutton)
-                elif pg.mouse.get_pressed()[2]:
-                    pos = pg.mouse.get_pos()
-                    cells[pos[1] // self.size, pos[0] // self.size] = 0
+                # place or remove cell in grid
+                elif any(click := pg.mouse.get_pressed()):
+                    x, y = pg.mouse.get_pos() # left click to place, right click to remove
+                    try: cells[y // self.size, x // self.size] = 1 if click[0] else 0
+                    except: pass # if user clicks off screen
             
             
             

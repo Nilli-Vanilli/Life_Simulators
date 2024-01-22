@@ -59,17 +59,16 @@ def antialiased_circle(size, radius):
     
     
     # apply logistic function (type of smoothstep to blur circle)
-    
     logres = log(min(*size), 2) # steepness of smoothstep
     
     with np.errstate(over="ignore"): # if cell is far away from origin, exp can overflow, so just leave as 0
         logistic = 1 / (1 + np.exp(logres * (radii - radius)))
     
     # center circle at extremes of matrix
-    v_shift = np.roll(logistic, y // 2, axis=0)
-    h_shift = np.roll(v_shift, x // 2, axis=1)
+    matrix = np.roll(logistic, y // 2, axis=0) # vertical shift
+    matrix = np.roll(matrix, x // 2, axis=1) # horizontal shift
     
-    return h_shift
+    return matrix
 
 
 
@@ -266,9 +265,9 @@ class SL():
     def draw_cell(self, grid):
         
         # get pixel at mouse position
-        pos = pg.mouse.get_pos()
-        row = pos[1] // self.size
-        col = pos[0] // self.size
+        x, y = pg.mouse.get_pos()
+        row = y // self.size
+        col = x // self.size
         
         # get half of radius of cell
         radius = int(self.ra / 2)

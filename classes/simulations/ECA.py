@@ -133,8 +133,6 @@ class ECA():
         for index in self.start_indices:
             cells[-1][index] = 1
                 
-
-        
         #running loop
         paused = False
         running = True
@@ -145,7 +143,6 @@ class ECA():
                 if event.type == pg.QUIT:
                     running = not running
                     
-                
                 # get keypresses
                 elif event.type == pg.KEYDOWN:
                     
@@ -165,7 +162,7 @@ class ECA():
                 elif pg.mouse.get_pressed()[0]:
                     index = pg.mouse.get_pos()[0] // self.size
                     try: cells[-1][index] = not cells[-1][index]
-                    except: pass
+                    except: pass # if user clicks off screen
 
 
  

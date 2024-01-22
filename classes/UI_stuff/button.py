@@ -8,7 +8,7 @@ class Button():
     lock_colour = False
     lock_font = False
     
-    # declare variables
+    # colour and font
     colour = None
     font = None
     
@@ -16,7 +16,7 @@ class Button():
         
         x, y, width, height = rect
         
-        self.x = x - width / 2
+        self.x = x - width / 2   # make pos center of button
         self.y = y - height / 2
         self.width = width
         self.height = height
@@ -53,6 +53,7 @@ class Button():
     
     def set_colours(self, body: tuple, hover: tuple, click: tuple, text: tuple):
         
+        # set new colours and lock them
         self.colours.button_body = body
         self.colours.button_hover = hover
         self.colours.button_click = click
@@ -66,22 +67,22 @@ class Button():
         # return value
         action = False
         
-        # get mouse position
+        # get mouse position and check if left mousebutton is clicked
         pos = pg.mouse.get_pos()
+        click = pg.mouse.get_pressed()[0]
 
         # check if mouse is hovering over button
         if self.rect.collidepoint(pos):
             
             # if the mouse is clicked, display click colour
-            if pg.mouse.get_pressed()[0]:
+            if click:
                 self.clicked = True
                 self.colour = self.colours.button_click
             
             # after a click, reset and send button output
-            elif not pg.mouse.get_pressed()[0] and self.clicked:
+            elif self.clicked:
                 self.clicked = False
                 action = True
-                self.colour = self.colours.button_hover
             
             # if mouse is hovering display hover colour
             else: self.colour = self.colours.button_hover
@@ -110,11 +111,13 @@ class Button():
         if not self.lock_font:
             self.fonts = window.fonts
         
+        # reset text image
         text_img = self.reset()
         
         # check mouseover
         action = self.check_mouseover()
         
+        # only draw button when it is not hidden
         if not self.hidden:
             
             # draw button
@@ -124,6 +127,7 @@ class Button():
             self.shade_button(window.screen)
 
             # draw text on button
-            window.screen.blit(text_img, (self.x + self.width // 2 - self.text_len // 2, self.y + self.height // 2 - self.text_height // 2))
+            window.screen.blit(text_img, (self.x + self.width // 2 - self.text_len // 2,
+                                          self.y + self.height // 2 - self.text_height // 2))
          
         return action

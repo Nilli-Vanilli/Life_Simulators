@@ -96,7 +96,7 @@ class PL():
         
         elif y > 1 - self.r_max: # up wrap
             bb = BoundingBox(x - self.r_max,0,
-                                x + self.r_max, self.r_max - 1 + y)
+                             x + self.r_max, self.r_max - 1 + y)
             
             neighbours += self.tree.within_bb(bb)
         
@@ -149,11 +149,11 @@ class PL():
         add_y = 0
         
         # get mouse position
-        pos = pg.mouse.get_pos()
+        x, y = pg.mouse.get_pos()
                 
         # calculate euclidean distance between original particle and the mouse
-        rx = self.positions_x[i] - pos[0] / self.window.width
-        ry = self.positions_y[i] - pos[1] / self.window.height
+        rx = self.positions_x[i] - x / self.window.width
+        ry = self.positions_y[i] - y / self.window.height
         
         # periodic boundary
         if rx > 0.5: rx -= 1
@@ -265,7 +265,7 @@ class PL():
             x = self.positions_x[i] * self.window.width
             y = self.positions_y[i] * self.window.height
             
-            # determine colour, based on dim of matrix
+            # determine colour, based on amound of particle types
             colour = pg.Color(0,0,0); colour.hsla = (360 * self.colours[i] / self.num_colours, 100, 50, 100)
             
             # draw particle
@@ -311,7 +311,6 @@ class PL():
                 if event.type == pg.QUIT:
                     running = not running
                 
-                
                 # get keypresses
                 if event.type == pg.KEYDOWN:
                     
@@ -326,9 +325,9 @@ class PL():
                     # randomise rule matrix (r)
                     elif event.key == pg.K_r:
                         self.matrix = rnd_matrix(self.num_colours)
-                
-                
-                    
+                  
+                  
+                          
             # refresh screen
             self.window.screen.fill(self.cbg)
             

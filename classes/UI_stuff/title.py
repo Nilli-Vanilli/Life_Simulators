@@ -7,8 +7,11 @@ class Title():
     lock_colour = False
     lock_font = False
 
-    # declare variables
-    text_size = None
+    # other stuff
+    x = None
+    y = None
+    text_width = None
+    text_height = None
     colour = None
     font = None
     
@@ -26,11 +29,8 @@ class Title():
             self.lock_font = True
             
         self.text = text
-        
         self.size = size
-        
-        self.pos = pos
-        
+        self.x0, self.y0 = pos
         self.underlined = underlined
         
         
@@ -42,9 +42,9 @@ class Title():
         self.font = pg.font.SysFont(self.fonts.title, int(self.size))
         
         # reset size and position
-        self.text_size = self.font.size(self.text)
-        self.x = self.pos[0] - self.text_size[0] / 2
-        self.y = self.pos[1] - self.text_size[1] / 2
+        self.text_width, self.text_height = self.font.size(self.text)
+        self.x = self.x0 - self.text_width / 2
+        self.y = self.y0 - self.text_height / 2
         
         # render text again
         text_img = self.font.render(self.text, True, self.colours.title)
@@ -60,7 +60,8 @@ class Title():
             self.colours = window.colours
         if not self.lock_font:
             self.fonts = window.fonts
-            
+        
+        # reset text
         text_img = self.reset()
         
         # draw title
@@ -68,7 +69,7 @@ class Title():
         
         # draw line under title
         if self.underlined:
-            pg.draw.line(window.screen, self.colours.underline, (self.x, self.y + self.text_size[1]),
-                         (self.x + self.text_size[0], self.y + self.text_size[1]), 3)
+            pg.draw.line(window.screen, self.colours.underline, (self.x, self.y + self.text_height),
+                         (self.x + self.text_width, self.y + self.text_height), 3)
         
         
