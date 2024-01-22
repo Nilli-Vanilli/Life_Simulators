@@ -1,33 +1,7 @@
-'''
-Todo:
-
-
-
-MAIN:
-readme
-github
-paper
-
-
-
-ECA:
-
-
-
-GOL:
-
-
-
-PL:
-input handling
-
-
-
-SMOOTHLIFE:
-'''
-
-
-
+# TODO
+# readme
+# github
+# paper
 
 
 

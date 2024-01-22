@@ -31,7 +31,7 @@ def run_pl(config):
         size_box := Input_Box(name="SIZE:",
                               rect=(0.51 * x, 0.82 * y, 0.17 * x, 0.03 * y),
                               text=f"{config.size}",
-                              error_message="size should be an int greater than one"),
+                              error_message="size should be an int greater than zero"),
         
         r_max_box := Input_Box(name="RANGE:",
                                rect=(0.72 * x, 0.72 * y, 0.17 * x, 0.03 * y),
@@ -106,11 +106,10 @@ def run_pl(config):
         
         
         # temp validities
-        num_particles_box.valid = True
-        size_box.valid = True
-        r_max_box.valid = True
-        forcefactor_box.valid = True
-        
+        num_particles_box.valid = True if config.mb else valid_num(config, num_particles_box.text.lower()) # number of particles
+        size_box.valid = True if config.mb else valid_size(config, size_box.text.lower())                  # particle size
+        r_max_box.valid = True if config.mb else valid_range(config, r_max_box.text.lower())               # range
+        forcefactor_box.valid = True if config.mb else valid_force(config, forcefactor_box.text.lower())   # force factor
         fps_box.valid = valid_fps(config, fps_box.text.lower()) # allowed to change during mb
         dt_box.valid = valid_dt(config, dt_box.text.lower()) # allowed to change during mb
         
@@ -184,6 +183,70 @@ def run_pl(config):
 
 
 '''input handeling'''
+
+def valid_num(config, user_input):
+    
+    try:
+        num = int(user_input)
+        
+        if num > 0:
+            
+            config.num_particles = num
+            config.num_particles_rnd = False
+            return True
+    
+    except:
+        if user_input == "random": config.num_particles_rnd = True; return True
+
+
+
+def valid_size(config, user_input):
+    
+    try:
+        size = int(user_input)
+        
+        if size > 0:
+            
+            config.size = size
+            config.size_rnd = False
+            return True
+    
+    except:
+        if user_input == "random": config.size_rnd = True; return True
+
+
+
+def valid_range(config, user_input):
+    
+    try:
+        r = float(user_input)
+        
+        if 0 < r <= 1:
+            
+            config.r_max = r
+            config.r_max_rnd = False
+            return True
+    
+    except:
+        if user_input == "random": config.r_max_rnd = True; return True
+
+
+
+def valid_force(config, user_input):
+    
+    try:
+        forcefactor = int(user_input)
+        
+        if forcefactor > 0:
+            
+            config.forcefactor = forcefactor
+            config.forcefactor_rnd = False
+            return True
+    
+    except:
+        if user_input == "random": config.forcefactor_rnd = True; return True
+        
+        
 
 def valid_fps(config, user_input):
     

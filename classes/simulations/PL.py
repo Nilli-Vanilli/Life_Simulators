@@ -10,11 +10,8 @@ from math import hypot
 # function to calculate force between two particles
 def force(beta, r, a):
     
-    if r < beta: # make sure particles dont get too close to one another
-        return r / beta - 1
-    
-    else:
-        return a * (1 - abs(2 * r - 1 - beta) / (1 - beta))
+    # repel if particles get to close, else force depends on r and a
+    return r / beta - 1 if r < beta else a * (1 - abs(2 * r - 1 - beta) / (1 - beta))
     
 
 
@@ -30,7 +27,7 @@ def rnd_matrix(n):
     
 
 
-class PL(Window):
+class PL():
     
     # background colour
     cbg = (10,10,10)
@@ -167,11 +164,8 @@ class PL(Window):
         r = hypot(rx, ry)
         
         # if mouse in range, create a force between particle and mouse
-        if r < self.r_max:
-            if click[0]: # left mousebutton
-                f = force(self.beta, r / self.r_max, -3)
-            else:  # right mousebutton
-                f = force(self.beta, r / self.r_max, 5)
+        if r < self.r_max: # attract if left click, else repel
+            f = force(self.beta, r / self.r_max, -3 if click[0] else 5)
         
         # if mouse not in range, don't add force
         else: return 0, 0
