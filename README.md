@@ -23,9 +23,13 @@ when running the programme, you should find yourself in the main menu. Here you 
 ### Elementary Cellular Automata
 
 The first cellular automaton is the set of ECA's explored by Stephen Wolfram in his book '*A New Kind of Science*'. You should be met with a screen containing seven different input boxes. You can click on these boxes to alter the configuration of the CA by typing in them.
+
 The rule is what determines how a certain generation will evolve over time. It should be an integer between 0 and 255, which can be entered in either binary or decimal.
+
 The size refers to the width and height of each cell in pixels. It can be any integer between five and a hundred. Do note that the size directly affects the amount of cells that make up a generation.
+
 The start indices are the cells that will be turned on in the first generation. It can either be a single integer or a list of them, as long as they do not exceed the number of cells in a generation (the programme will tell you if a certain index is out of bounds). Furthermore, it is possible to enter 'middle' to turn on only the middle cell, or 'empty' to turn on no cells at all.
+
 Then there is the boundary condition. This describes what happens at the edges of the grid, since unfortunately it is not infinite (yet). Currently four different boundary conditions are supported:
 
 1) 'periodic' - the grid wraps around to connect to itself.
