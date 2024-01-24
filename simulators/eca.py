@@ -42,17 +42,17 @@ def run_eca(config):
 
         cgrid_box := Input_Box(name="COLOUR GRID:",
                                rect=(0.05 * x, 0.65 * y, 0.5 * x, 0.03 * y),
-                               text=f"{config.cgrid}",
+                               text=f"{config.cgrid[:3]}",
                                error_message="colour should be a triple of ints between 0 and 255, or a named colour"),                                           
 
         coff_box := Input_Box(name="COLOUR OFF STATE:",
                               rect=(0.05 * x, 0.75 * y, 0.5 * x, 0.03 * y),
-                              text=f"{config.coff}",
+                              text=f"{config.coff[:3]}",
                               error_message="colour should be a triple of ints between 0 and 255, or a named colour"),      
 
         con_box := Input_Box(name="COLOUR ON STATE:",
                              rect=(0.05 * x, 0.85 * y, 0.5 * x, 0.03 * y),
-                             text=f"{config.con}",
+                             text=f"{config.con[:3]}",
                              error_message="colour should be a triple of ints between 0 and 255, or a named colour"),
         
         fps_box := Input_Box(name="FPS-CAP:",

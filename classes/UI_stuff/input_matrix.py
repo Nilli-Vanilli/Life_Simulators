@@ -31,12 +31,16 @@ class Input_Matrix:
         # if in locked state, unlock and get stored matrix
         if self.locked:
             self.matrix = self.locked_matrix
+            self.dim = self.matrix.shape[0] # reset dim
+            self.size = self.width / self.dim # reset size
             self.locked = False
         
         # if in unlocked state, lock and store current matrix 
         else:
             self.locked_matrix = self.matrix
             self.matrix = np.zeros((10,10)) # initialise empty matrix for animation
+            self.dim = 10 # set dim
+            self.size = self.width / 10 # set size
             self.locked = True
             
             
@@ -146,7 +150,7 @@ class Input_Matrix:
     def animate_rnd_matrix(self):
         
         # get random matrix element
-        coord = (randint(0,self.dim - 1), randint(0,self.dim - 1))
+        coord = (randint(0, 9), randint(0, 9))
         
         # if number of elapsed seconds is uneven, increase element if possible
         if (pg.time.get_ticks()//1000) % 2 and self.matrix[coord] <= 0.8:
