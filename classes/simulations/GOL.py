@@ -30,15 +30,14 @@ class GOL():
         self.size = size
         self.boundary = boundary
         self.fps_cap = fps_cap
-        
-        self.grid_lines = 1 if grid_lines else 0
+        self.grid_lines = grid_lines
         
         self.width = self.window.width // self.size
         self.height = self.window.height // self.size
     
     
     
-    def update_grid(self, cells, paused=False):
+    def update_grid(self, cells: np.ndarray, paused=False):
         
         # initialise next generation
         updated_cells = np.zeros((cells.shape[0], cells.shape[1]), dtype=int)
@@ -91,7 +90,7 @@ class GOL():
     
     
     
-    def fill_rnd(self, grid):
+    def fill_rnd(self, grid: np.ndarray):
         
         # turn on rougly a sixth of the cells in the grid
         for _ in range(self.width * self.height // 6):

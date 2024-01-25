@@ -1,4 +1,5 @@
 from classes.style import Colours, Fonts
+from classes.window import Window
 import pygame as pg
 
 class Input_Box():
@@ -83,7 +84,7 @@ class Input_Box():
     
     
     
-    def create_rects(self, text_img):
+    def create_rects(self, text_img: pg.Surface):
         
         #create rect for box
         input_rect = pg.Rect(self.x, self.y, self.width, self.height)
@@ -96,7 +97,7 @@ class Input_Box():
         
         
         
-    def get_text_width(self, text):
+    def get_text_width(self, text: str):
         
         # render text and get its width on the screen
         text = self.font.render(text, True, self.colours.input_text)
@@ -107,7 +108,7 @@ class Input_Box():
     
     
     
-    def update_index(self, text_rect, x):
+    def update_index(self, text_rect: pg.Surface, x: float):
         
         # get relative size of text to determine how precise our search should be
         scale = len(self.text) // 10
@@ -125,7 +126,7 @@ class Input_Box():
         
     
     
-    def draw_cursor(self, screen):
+    def draw_cursor(self, screen: pg.Surface):
         
         # if cursor not all the way to the left, find width of text up to the cursor index and use to get cursor pos
         if self.cursorindex > 0:   
@@ -143,7 +144,7 @@ class Input_Box():
         
         
     
-    def check_mouseover(self, input_rect, text_rect):
+    def check_mouseover(self, input_rect: pg.Surface, text_rect: pg.Surface):
         
         # get mouse position and check if left mousebutton is clicked
         pos = pg.mouse.get_pos()
@@ -174,7 +175,7 @@ class Input_Box():
         
     
     
-    def active_mode(self, screen, key):
+    def active_mode(self, screen: pg.Surface, key: pg.event.Event):
         
         # check if a key was pressed
             if key:
@@ -183,7 +184,7 @@ class Input_Box():
                 if key.key == pg.K_BACKSPACE:
                     
                     # check if there is text in the box and the cursor is not all the way to the left
-                    if len(self.text) + self.cursorindex > 0:
+                    if len(self.text) * self.cursorindex > 0:
                         
                         # remove a character behind the cursor and decrease the cursor index
                         self.text = self.text[:self.cursorindex - 1] + self.text[self.cursorindex:]
@@ -228,7 +229,7 @@ class Input_Box():
     
     
     
-    def shade_box(self, screen):
+    def shade_box(self, screen: pg.Surface):
         
         pg.draw.line(screen, self.colours.shade_pos, (self.x, self.y), (self.x + self.width, self.y), 2)
         pg.draw.line(screen, self.colours.shade_pos, (self.x, self.y), (self.x, self.y + self.height), 2)
@@ -237,7 +238,7 @@ class Input_Box():
         
         
     
-    def draw(self, window, key):
+    def draw(self, window: Window, key: pg.event.Event):
         
         # reset colours and fonts
         if not self.lock_colour:

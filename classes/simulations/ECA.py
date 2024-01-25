@@ -34,8 +34,7 @@ class ECA():
         self.fps_cap = fps_cap
         
         self.start_indices_middle = middle
-        
-        self.grid_lines = 1 if grid_lines else 0
+        self.grid_lines = grid_lines
         
         self.width = window.width // self.size
         self.height = window.height // self.size
@@ -43,7 +42,7 @@ class ECA():
         
         
     # update grid
-    def update_grid(self, full_grid):
+    def update_grid(self, full_grid: np.ndarray):
     
         # consider last row of grid as current generation
         cells = full_grid[-1]
@@ -86,7 +85,7 @@ class ECA():
     
     
     
-    def draw_grid(self, grid):
+    def draw_grid(self, grid: np.ndarray):
         
         # loop through all cells in grid
         for row, col in np.ndindex(grid.shape):

@@ -1,3 +1,4 @@
+from classes.window import Window
 import pygame as pg
 import numpy as np
 from random import randint
@@ -71,7 +72,7 @@ class Input_Matrix:
     
     
     
-    def draw_hover(self, window, relative_pos):
+    def draw_hover(self, window: Window, relative_pos: tuple):
         
         # unpack position of mouse relative to the matrix
         row, col = relative_pos
@@ -84,7 +85,7 @@ class Input_Matrix:
             
             
     
-    def check_mouseover(self, window):
+    def check_mouseover(self, window: Window):
         
         # get position of mouse relative to the matrix, as well as button press
         pos = pg.mouse.get_pos() # relative pos will be stored as (row, column)
@@ -107,7 +108,7 @@ class Input_Matrix:
         
     
     
-    def draw_cells(self, screen):
+    def draw_cells(self, screen: pg.Surface):
         
         # loop through all cells
         for row, col in np.ndindex(self.matrix.shape):
@@ -124,7 +125,7 @@ class Input_Matrix:
             
     
     
-    def draw_colourballs(self, screen):
+    def draw_colourballs(self, screen: pg.Surface):
         
         # loop through all the different particle types
         for i in range(self.dim):
@@ -162,7 +163,7 @@ class Input_Matrix:
     
     
     
-    def draw(self, window):
+    def draw(self, window: Window):
         
         # draw grid
         pg.draw.rect(window.screen, window.colours.underline,(self.x, self.y, self.width, self.height))

@@ -1,8 +1,9 @@
 # not a class but oh well
 import pygame as pg
+from classes.window import Window
 from classes.UI_stuff import *
 
-def exit_screen(window):
+def exit_screen(window: Window):
     
     # position multipliers
     x = window.width

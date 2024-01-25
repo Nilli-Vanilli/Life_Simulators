@@ -8,37 +8,37 @@ from random import randint, choice, uniform
 
 '''threshold / interval functions'''
 
-def logistic_threshold(x, x0, alpha):
+def logistic_threshold(x: float, x0: float, alpha: float):
     
     return 1.0 / (1.0 + np.exp(-4.0 / alpha * (x - x0)))
 
 
 
-def hard_threshold(x, x0):
+def hard_threshold(x: float, x0: float):
 
     return np.greater(x, x0)
 
 
 
-def linearized_threshold(x, x0, alpha):
+def linearized_threshold(x: float, x0: float, alpha: float):
 
     return np.clip((x - x0) / alpha + 0.5, 0, 1)
 
 
 
-def logistic_interval(x, a, b, alpha):
+def logistic_interval(x: float, a: float, b: float, alpha: float):
 
     return logistic_threshold(x, a, alpha) * (1.0 - logistic_threshold(x, b, alpha))
 
 
 
-def linearized_interval(x, a, b, alpha):
+def linearized_interval(x: float, a: float, b: float, alpha: float):
 
     return linearized_threshold(x, a, alpha) * (1.0 - linearized_threshold(x, b, alpha))
 
 
 
-def lerp(a, b, t):
+def lerp(a: float, b: float, t: float):
 
     return (1.0 - t) * a + t * b
 
@@ -46,7 +46,7 @@ def lerp(a, b, t):
 
 '''other functions'''
 
-def antialiased_circle(size, radius):
+def antialiased_circle(size: tuple, radius: float):
     
     y, x = size
     
@@ -79,7 +79,7 @@ def antialiased_circle(size, radius):
 class SL():
     
     # colour background
-    cgrid = (10,10,10)
+    cgrid = (0,0,0)
     
     # initial ranges
     birth_range = (0.278, 0.365)    # birth
@@ -128,7 +128,7 @@ class SL():
         
     
     
-    def sigmoid_ab(self, x, a, b):
+    def sigmoid_ab(self, x: float, a: float, b: float):
         
         if self.sigtype == 0:
             return hard_threshold(x, a) * (1 - hard_threshold(x, b))
@@ -141,7 +141,7 @@ class SL():
     
     
     
-    def sigmoid_mix(self, x, y, m):
+    def sigmoid_mix(self, x: float, y: float, m: float):
         
         if self.mixtype == 0:
             intermediate = hard_threshold(m, 0.5)
@@ -156,7 +156,7 @@ class SL():
     
     
     
-    def s(self, n, m, grid):
+    def s(self, n: float, m: float, grid: np.ndarray):
         
         B1, B2 = self.birth_range
         D1, D2 = self.survival_range
@@ -228,7 +228,7 @@ class SL():
 
 
     
-    def step(self, grid, M, N):
+    def step(self, grid: np.ndarray, M: float, N: float):
 
         # convert grid to frequency domain
         grid_ = np.fft.fft2(grid)
@@ -248,7 +248,7 @@ class SL():
     
     
     
-    def fill_rnd(self, grid):
+    def fill_rnd(self, grid: np.ndarray):
         
         # create a few live cells in the grid, dependent on how large cells should be according to outer radius
         for _ in range(int(self.width * self.height / ((self.ra * 2) ** 2))):
@@ -262,7 +262,7 @@ class SL():
         
         
     
-    def draw_cell(self, grid):
+    def draw_cell(self, grid: np.ndarray):
         
         # get pixel at mouse position
         x, y = pg.mouse.get_pos()
@@ -276,7 +276,7 @@ class SL():
         
     
     
-    def draw_grid(self, grid):
+    def draw_grid(self, grid: np.ndarray):
         
         # loop through every "pixel" in grid
         for row, col in np.ndindex(grid.shape):

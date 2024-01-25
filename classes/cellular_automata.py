@@ -1,9 +1,10 @@
 from classes.simulations import *
+from classes.window import Window
 
 # these are all the preset configurations of the simulations
 class Cellular_Automata:
     
-    def __init__(self, window) -> None:
+    def __init__(self, window: Window) -> None:
         
         # Elementary Cellular Automata
         self.eca = ECA(window=window,

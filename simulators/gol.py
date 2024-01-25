@@ -7,7 +7,7 @@ from classes import *
 
 '''main'''
 
-def run_gol(config):
+def run_gol(config: GOL):
     
     # position multipliers
     x = config.window.width
@@ -168,7 +168,7 @@ def run_gol(config):
 
 '''input handeling'''
 
-def valid_rule(config, user_input):
+def valid_rule(config: GOL, user_input: str):
     
     try:
         rule = tuple(int(i) for i in user_input.strip("()").split(","))
@@ -186,7 +186,7 @@ def valid_rule(config, user_input):
 
 
 
-def valid_size(config, user_input):
+def valid_size(config: GOL, user_input: str):
     
     try: 
         size = int(user_input)
@@ -202,7 +202,7 @@ def valid_size(config, user_input):
 
 
 
-def valid_boundary(config, user_input):
+def valid_boundary(config: GOL, user_input: str):
     
     boundary_conditions = ("periodic", "dirichlet 0", "dirichlet 1", "neumann")
     
@@ -216,7 +216,7 @@ def valid_boundary(config, user_input):
 
 
 
-def valid_fps_cap(config, user_input):
+def valid_fps_cap(config: GOL, user_input: str):
     
     try:
         fps_cap = int(user_input)
@@ -230,7 +230,7 @@ def valid_fps_cap(config, user_input):
 
 
 
-def valid_colour(config, user_input, obj):
+def valid_colour(config: GOL, user_input: str, obj: str):
     
     try:
         colour = tuple(int(i) for i in user_input.strip("()").split(","))

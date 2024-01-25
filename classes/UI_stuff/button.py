@@ -1,4 +1,5 @@
 from classes.style import Colours, Fonts
+from classes.window import Window
 import pygame as pg
 
 class Button():
@@ -94,8 +95,8 @@ class Button():
         
       
       
-    def shade_button(self, screen):
-        
+    def shade_button(self, screen: pg.Surface):
+
         pg.draw.line(screen, self.colours.shade_pos, (self.x, self.y), (self.x + self.width, self.y), 2)
         pg.draw.line(screen, self.colours.shade_pos, (self.x, self.y), (self.x, self.y + self.height), 2)
         pg.draw.line(screen, self.colours.shade_neg, (self.x, self.y + self.height), (self.x + self.width, self.y + self.height), 2)
@@ -103,7 +104,7 @@ class Button():
             
           
     
-    def draw(self, window):
+    def draw(self, window: Window):
         
         # reset colours and fonts if they are not locked
         if not self.lock_colour:

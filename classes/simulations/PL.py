@@ -8,7 +8,7 @@ from math import hypot
 
 
 # function to calculate force between two particles
-def force(beta, r, a):
+def force(beta: float, r: float, a: float):
     
     # repel if particles get to close, else force depends on r and a
     return r / beta - 1 if r < beta else a * (1 - abs(2 * r - 1 - beta) / (1 - beta))
@@ -16,7 +16,7 @@ def force(beta, r, a):
 
 
 # function to create random n x n matrix with coefficients between -1 and 1
-def rnd_matrix(n):
+def rnd_matrix(n: int):
     
     matrix = np.random.rand(n,n)
     
@@ -67,7 +67,7 @@ class PL():
       
     
     
-    def get_neighbours(self, x, y):
+    def get_neighbours(self, x: float, y: float):
         
         # find all particles in range of the specified position
         bb = BoundingBox(x - self.r_max, y - self.r_max,
@@ -104,7 +104,7 @@ class PL():
             
             
     
-    def particles_effect(self, i, points):
+    def particles_effect(self, i: int, points: list):
         
         # return values
         fx = 0
@@ -142,7 +142,7 @@ class PL():
     
     
     
-    def mouse_effect(self, i, click):
+    def mouse_effect(self, i: int, click: tuple):
     
         # return values
         add_x = 0
@@ -178,7 +178,7 @@ class PL():
     
     
     
-    def calculate_velocity(self, i, fx, fy):
+    def calculate_velocity(self, i: int, fx: float, fy: float):
         
         # rescale force by r_max (we normalise r when we calculate the force)
         # and apply bonus force

@@ -8,7 +8,7 @@ from classes import *
 
 '''main'''
 
-def run_eca(config):
+def run_eca(config: ECA):
     
     # position multipliers
     x = config.window.width
@@ -169,7 +169,7 @@ def run_eca(config):
 
 '''input handeling'''
 
-def valid_rule(config, user_input):
+def valid_rule(config: ECA, user_input: str):
     
     try: 
         
@@ -187,7 +187,7 @@ def valid_rule(config, user_input):
 
 
 
-def valid_size(config, user_input):
+def valid_size(config: ECA, user_input: str):
     
     try: 
         size = int(user_input)
@@ -203,7 +203,7 @@ def valid_size(config, user_input):
 
 
 
-def valid_start(config, input_box):
+def valid_start(config: ECA, input_box: Input_Box):
     
     user_input = input_box.text
     
@@ -235,7 +235,7 @@ def valid_start(config, input_box):
         
     
 
-def valid_boundary(config, user_input):
+def valid_boundary(config: ECA, user_input: str):
     
     boundary_conditions = ("periodic", "dirichlet 0", "dirichlet 1", "neumann")
     
@@ -249,7 +249,7 @@ def valid_boundary(config, user_input):
     
     
     
-def valid_fps_cap(config, user_input):
+def valid_fps_cap(config: ECA, user_input: str):
     
     try:
         fps_cap = int(user_input)
@@ -263,7 +263,7 @@ def valid_fps_cap(config, user_input):
 
 
 
-def valid_colour(config, user_input, obj):
+def valid_colour(config: ECA, user_input: str, obj: str):
     
     try:
         colour = tuple(int(i) for i in user_input.strip("()").split(","))

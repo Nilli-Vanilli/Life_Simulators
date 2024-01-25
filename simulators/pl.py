@@ -8,7 +8,7 @@ from classes import *
 
 '''main'''
 
-def run_pl(config):
+def run_pl(config: PL):
     
     # position multipliers
     x = config.window.width
@@ -184,7 +184,7 @@ def run_pl(config):
 
 '''input handeling'''
 
-def valid_num(config, user_input):
+def valid_num(config: PL, user_input: str):
     
     try:
         num = int(user_input)
@@ -200,7 +200,7 @@ def valid_num(config, user_input):
 
 
 
-def valid_size(config, user_input):
+def valid_size(config: PL, user_input: str):
     
     try:
         size = int(user_input)
@@ -216,7 +216,7 @@ def valid_size(config, user_input):
 
 
 
-def valid_range(config, user_input):
+def valid_range(config: PL, user_input: str):
     
     try:
         r = float(user_input)
@@ -232,7 +232,7 @@ def valid_range(config, user_input):
 
 
 
-def valid_force(config, user_input):
+def valid_force(config: PL, user_input: str):
     
     try:
         forcefactor = int(user_input)
@@ -248,7 +248,7 @@ def valid_force(config, user_input):
         
         
 
-def valid_fps(config, user_input):
+def valid_fps(config: PL, user_input: str):
     
     try:
         fps_cap = int(user_input)
@@ -262,7 +262,7 @@ def valid_fps(config, user_input):
 
 
 
-def valid_dt(config, user_input):
+def valid_dt(config: PL, user_input: str):
     
     try:
         dt = float(user_input)

@@ -8,7 +8,7 @@ from classes import *
 
 '''main'''
 
-def run_sl(config):
+def run_sl(config: SL):
     
     # position multipliers
     x = config.window.width
@@ -211,7 +211,7 @@ def run_sl(config):
     
     '''input handeling'''
 
-def valid_modes(config, user_input):
+def valid_modes(config: SL, user_input: str):
     
     try:
         modes = tuple(int(i) for i in user_input.strip("()").split(","))
@@ -234,7 +234,7 @@ def valid_modes(config, user_input):
             
 
 
-def valid_types(config, user_input):
+def valid_types(config: SL, user_input: str):
     
     try:
         types = tuple(int(i) for i in user_input.strip("()").split(","))
@@ -253,7 +253,7 @@ def valid_types(config, user_input):
 
 
 
-def valid_size(config, user_input):
+def valid_size(config: SL, user_input: str):
     
     try: 
         size = int(user_input)
@@ -269,7 +269,7 @@ def valid_size(config, user_input):
 
 
 
-def valid_ra(config, user_input):
+def valid_ra(config: SL, user_input: str):
     
     try:
         ra = float(user_input)
@@ -286,7 +286,7 @@ def valid_ra(config, user_input):
 
 
 
-def valid_birth(config, user_input):
+def valid_birth(config: SL, user_input: str):
     
     try:
         b_range = tuple(float(i) for i in user_input.strip("()").split(","))
@@ -305,7 +305,7 @@ def valid_birth(config, user_input):
         
 
 
-def valid_survival(config, user_input):
+def valid_survival(config: SL, user_input: str):
     
     try:
         s_range = tuple(float(i) for i in user_input.strip("()").split(","))
@@ -324,7 +324,7 @@ def valid_survival(config, user_input):
         
 
 
-def valid_widths(config, user_input):
+def valid_widths(config: SL, user_input: str):
     
     try:
         widths = tuple(float(i) for i in user_input.strip("()").split(","))
@@ -343,7 +343,7 @@ def valid_widths(config, user_input):
 
 
 
-def valid_fps(config, user_input):
+def valid_fps(config: SL, user_input: str):
     
     try:
         fps_cap = int(user_input)
@@ -357,7 +357,7 @@ def valid_fps(config, user_input):
 
 
 
-def valid_dt(config, user_input):
+def valid_dt(config: SL, user_input: str):
     
     try:
         dt = float(user_input)

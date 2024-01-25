@@ -1,4 +1,5 @@
 from classes.style import Colours, Fonts
+from classes.window import Window
 import pygame as pg
 
 class Title():
@@ -53,7 +54,7 @@ class Title():
         
     
     
-    def draw(self, window):
+    def draw(self, window: Window):
         
         # reset colours and fonts
         if not self.lock_colour:
