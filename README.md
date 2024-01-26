@@ -22,7 +22,7 @@ when running the programme, you should find yourself in the main menu. Here you 
 
 ### Elementary Cellular Automata
 
-The first cellular automaton is the set of ECA's explored by Stephen Wolfram in his book '*A New Kind of Science*'. You should be met with a screen containing seven different input boxes. You can click on these boxes to alter the configuration of the CA by typing in them.
+The first cellular automaton is the set of [ECA's](https://mathworld.wolfram.com/ElementaryCellularAutomaton.html) explored by Stephen Wolfram in his book '*A New Kind of Science*'. You should be met with a screen containing seven different input boxes. You can click on these boxes to alter the configuration of the CA by typing in them.
 
 The rule is what determines how a certain generation will evolve over time. It should be an integer between 0 and 255, which can be entered in either binary or decimal.
 
@@ -45,7 +45,7 @@ As the simulation is running, it is possible to interact with it in three ways. 
 
 ### Game of Life
 
-The next cellular automaton is the tremendously famous '*Game of Life*', designed by John Conway. You should again see seven input boxes you can alter to your heart's content. We will briefly run through them again.
+The next cellular automaton is the tremendously famous '[*Game of Life*](https://conwaylife.com/wiki/Conway%27s_Game_of_Life)', designed by John Conway. You should again see seven input boxes you can alter to your heart's content. We will briefly run through them again.
 
 The rule is a tuple this time, containing integers between 0 and 8. The first two digits make up the range of how many live neighbours a cell should have in order to survive. Since it is a range, the second digit should be greater than- or equal to the first. The last digit says how many live neighbours a cell needs in order for it to be born.
 
@@ -57,7 +57,7 @@ When you run the simulation, it will start off in it's paused state. Here you ca
 
 ### Particle Life
 
-Probably my favourite out of the four. Particle Life is a simulation based on the work of Jeffrey Ventrella. It simulates different groups of particles (represented by their colour), which excert forces on each other. these forces are characterised by a sort of 'gravitational constant', which determines how much a certain group attracts, or repels another group. We can represent the relations between all groups with a matrix, where each element is such a gravitational constant. In the input screen, the elements of this matrix are visualised using colour. Green means a positive force, meaning an attraction, and red means a negative force, or repulsion. You can alter the elements of the matrix by hovering over them with the mouse and then holding the left mousebutton to increase- or the right mousebutton to decrease them. There are also three buttons next to the matrix. The '**+**'button adds a new group, the '**-**' button removes one, and the '**RND**' button randomises the elements of the matrix while keeping it's shape.
+Probably my favourite out of the four. [Particle Life](https://www.youtube.com/watch?app=desktop&v=p4YirERTVF0) is a simulation based on the work of Jeffrey Ventrella. It simulates different groups of particles (represented by their colour), which excert forces on each other. these forces are characterised by a sort of 'gravitational constant', which determines how much a certain group attracts, or repels another group. We can represent the relations between all groups with a matrix, where each element is such a gravitational constant. In the input screen, the elements of this matrix are visualised using colour. Green means a positive force, meaning an attraction, and red means a negative force, or repulsion. You can alter the elements of the matrix by hovering over them with the mouse and then holding the left mousebutton to increase- or the right mousebutton to decrease them. There are also three buttons next to the matrix. The '**+**' button adds a new group, the '**-**' button removes one, and the '**RND**' button randomises the elements of the matrix while keeping it's shape.
 
 Of course there are also more input boxes to toy around with.
 The number of particles determines how many particles will be created overall. It can be any integer greater than zero, though I would not go too crazy since the enire thing runs on the CPU.
@@ -75,3 +75,9 @@ At this point I probably don't have to mention it anymore, but do try out the **
 As the simulation is running, you can again pause and unpause using the 'space' key. You can also attract particles towards your mouse using the left mousebutton, as well as push them away from you with the right mousebutton. If the current configuration starts to bore you, just press the 'R' key to randomise the elements of the matrix, completely changing the behaviour of all particles on the screen.
 
 ### Smooth Life
+
+Last but not least is a cellular autamaton called '[Smooth Life](https://arxiv.org/abs/1111.1567)'. It was created by Stephan Rafler and was meant to generalise Conway's game of life to a continuous domain. This means each pixel now holds a state that can be any floating point number between 0 and 1, and a 'cell' is now viewed as a dense region of 'healthy' pixels. How this CA is implemented was (and still is honestly) quite hard to wrap my head around, so most of the credit here actually goes to [duckythescientist](https://github.com/duckythescientist/SmoothLife), whose incredible python implementation I used as a framework to build mine around.
+
+In the input screen you are again met with seven input boxes. We'll briefly run through them one last time. The sigmoidmode and stepmode are combined into the modes box. The sigmoidmode refers to the type of smoothstep function we use to calculate the state of each pixel at the next timestep. There are four of these modes:
+
+1) 
