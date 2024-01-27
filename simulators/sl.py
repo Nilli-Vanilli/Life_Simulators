@@ -45,15 +45,15 @@ def run_sl(config: SL):
                             text=f"{round(config.ra, 3)}",
                             error_message="outer radius should be a float between 5 and 50"),
         
-        birth_box := Input_Box(name="BIRTH RANGE:",
+        birth_box := Input_Box(name="BIRTH INTERVAL:",
                                rect=(0.05 * x, 0.65 * y, 0.5 * x, 0.03 * y),
                                text=f"{tuple(round(a, 3) for a in config.birth_range)}",
                                error_message="birth range should be a pair of floats between 0 and 1 such that range[0] < range[1]"),  
         
-        survival_box := Input_Box(name="SURVIVAL RANGE:",
+        death_box := Input_Box(name="DEATH INTERVAL:",
                                   rect=(0.05 * x, 0.75 * y, 0.5 * x, 0.03 * y),
-                                  text=f"{tuple(round(a, 3) for a in config.survival_range)}",
-                                  error_message="survival range should be a pair of floats between 0 and 1 such that range[0] < range[1]"),
+                                  text=f"{tuple(round(a, 3) for a in config.death_range)}",
+                                  error_message="death range should be a pair of floats between 0 and 1 such that range[0] < range[1]"),
         
         widths_box := Input_Box(name="SIGMOID WIDTHS:",
                                 rect=(0.05 * x, 0.85 * y, 0.5 * x, 0.03 * y),
@@ -124,7 +124,7 @@ def run_sl(config: SL):
         size_box.valid = True if config.mb else valid_size(config, size_box.text.lower())
         ra_box.valid = True if config.mb else valid_ra(config, ra_box.text.lower())
         birth_box.valid = True if config.mb else valid_birth(config, birth_box.text.lower())
-        survival_box.valid = True if config.mb else valid_survival(config, survival_box.text.lower())
+        death_box.valid = True if config.mb else valid_death(config, death_box.text.lower())
         widths_box.valid = True if config.mb else valid_widths(config, widths_box.text.lower())
         fps_box.valid = valid_fps(config, fps_box.text.lower()) # allowed to change during mb
         dt_box.valid = valid_dt(config, dt_box.text.lower()) # allowed to change during mb
@@ -305,7 +305,7 @@ def valid_birth(config: SL, user_input: str):
         
 
 
-def valid_survival(config: SL, user_input: str):
+def valid_death(config: SL, user_input: str):
     
     try:
         s_range = tuple(float(i) for i in user_input.strip("()").split(","))
@@ -315,12 +315,12 @@ def valid_survival(config: SL, user_input: str):
         
         if all((0 <= val <= 1) for val in s_range):
             
-            config.survival_range = s_range
-            config.survival_rnd = False
+            config.death_range = s_range
+            config.death_rnd = False
             return True
     
     except:
-        if user_input == "random": config.survival_rnd = True; return True
+        if user_input == "random": config.death_rnd = True; return True
         
 
 

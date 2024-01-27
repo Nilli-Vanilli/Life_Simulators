@@ -32,6 +32,12 @@ def logistic_interval(x: float, a: float, b: float, alpha: float):
 
 
 
+def hard_interval(x: float, a: float, b: float):
+    
+    return hard_threshold(x, a) * (1 - hard_threshold(x, b))
+
+
+
 def linearized_interval(x: float, a: float, b: float, alpha: float):
 
     return linearized_threshold(x, a, alpha) * (1.0 - linearized_threshold(x, b, alpha))
@@ -83,7 +89,7 @@ class SL():
     
     # initial ranges
     birth_range = (0.278, 0.365)    # birth
-    survival_range = (0.267, 0.445) # survival
+    death_range = (0.267, 0.445)    # death
     sigmoid_widths = (0.028, 0.147) # smoothstep
     
     # multipliers
@@ -102,7 +108,7 @@ class SL():
     size_rnd = False
     ra_rnd = False
     birth_rnd = False
-    survival_rnd = False
+    death_rnd = False
     widths_rnd = False
     
     
@@ -131,7 +137,7 @@ class SL():
     def sigmoid_ab(self, x: float, a: float, b: float):
         
         if self.sigtype == 0:
-            return hard_threshold(x, a) * (1 - hard_threshold(x, b))
+            return hard_interval(x, a, b)
         
         elif self.sigtype == 1:
             return linearized_interval(x, a, b, self.sigmoid_widths[0])
@@ -159,7 +165,7 @@ class SL():
     def s(self, n: float, m: float, grid: np.ndarray):
         
         B1, B2 = self.birth_range
-        D1, D2 = self.survival_range
+        D1, D2 = self.death_range
         
         # determine next state for every "pixel" in the grid
         if self.sigmode == 1:
@@ -301,7 +307,7 @@ class SL():
         if self.mb or self.size_rnd: self.size = randint(5, 20)                                          # size
         if self.mb or self.ra_rnd: self.ra = randint(5, 50 - 2 * self.size); self.ri = self.ra / 3       # outer radius
         if self.mb or self.birth_rnd: self.birth_range = (a := uniform(0.1, 0.3), uniform(a, 1))         # birth range
-        if self.mb or self.survival_rnd: self.survival_range = (a := uniform(0.1, 0.3), uniform(a, 1))   # survival range
+        if self.mb or self.death_rnd: self.death_range = (a := uniform(0.1, 0.3), uniform(a, 1))   # death range
         if self.mb or self.widths_rnd: self.sigmoid_widths = (uniform(0.025, 0.05), uniform(0.05, 0.3))  # sigmoid widths
         
     
