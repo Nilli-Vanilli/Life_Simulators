@@ -30,14 +30,14 @@ The size refers to the width and height of each cell in pixels. It can be any in
 
 The start indices are the cells that will be turned on in the first generation. It can either be a single integer or a list of them, as long as they do not exceed the number of cells in a generation (the programme will tell you if a certain index is out of bounds). Furthermore, it is possible to enter 'middle' to turn on only the middle cell, or 'empty' to turn on no cells at all.
 
-Then there is the boundary condition. This describes what happens at the edges of the grid, since unfortunately it is not infinite (yet). Currently four different boundary conditions are supported:
+Then there is the boundary condition. This describes what happens at the edges of the grid, since unfortunately it is not infinite (yet). Currently, four different boundary conditions are supported:
 
 1) 'periodic' - the grid wraps around to connect to itself.
 2) 'Dirichlet 0' - the edges are always zero.
 3) 'Dirichlet 1' - the edges are always one.
 4) 'Neumann' - the edges share the state of their neighbour.
 
-Finally there are the colours. These should be a RGB-triples, meaning tuples of length three with integers between 0 and 255. It is also possible to enter any named Pygame colour out of this [list](https://www.pygame.org/docs/ref/color_list.html).
+Finally there are the colours. These should be RGB-triples, meaning tuples of length three with integers between 0 and 255. It is also possible to enter any named Pygame colour out of this [list](https://www.pygame.org/docs/ref/color_list.html).
 
 As an added bonus, if you feel like spicing up the cellular experience, each box also allows you to input 'random', which will randomise that part of the configuration each run. If you are feeling truly adventurous, then you might be tempted to try out the secret **mystery box!!!** mode, which can be accessed through a secret button hidden in the top right corner of the screen.
 
@@ -47,9 +47,9 @@ As the simulation is running, it is possible to interact with it in three ways. 
 
 The next cellular automaton is the tremendously famous '[*Game of Life*](https://conwaylife.com/wiki/Conway%27s_Game_of_Life)', designed by John Conway. You should again see seven input boxes you can alter to your heart's content. We will briefly run through them again.
 
-The rule is a tuple this time, containing integers between 0 and 8. The first two digits make up the range of how many live neighbours a cell should have in order to survive. Since it is a range, the second digit should be greater than- or equal to the first. The last digit says how many live neighbours a cell needs in order for it to be born.
+The rule is a tuple this time, containing integers between 0 and 8. The first two digits make up the range of how many live neighbours a cell should have in order to survive. Since it is an interval, the second digit should be greater than- or equal to the first. The last digit says how many live neighbours a cell needs in order for it to be born.
 
-The size, boundary and colours are the exact same as before. I highly recommend trying out the boundary condition: 'Dirichlet 1', and leaving the grid empty.
+The size, boundary condition and colours are the exact same as before. I highly recommend trying out the boundary condition: 'Dirichlet 1', and leaving the grid empty.
 
 Of course it is still possible to enter 'random' in all the boxes, and for the especially brave, there is always the **mystery box!!!**
 
@@ -60,7 +60,7 @@ When you run the simulation, it will start off in it's paused state. Here you ca
 Probably my favourite out of the four. [*Particle Life*](https://www.youtube.com/watch?app=desktop&v=p4YirERTVF0) is a simulation based on the work of Jeffrey Ventrella. It simulates different groups of particles (represented by their colour), which excert forces on each other. these forces are characterised by a sort of 'gravitational constant', which determines how much a certain group attracts, or repels another group. We can represent the relations between all groups with a matrix, where each element is such a gravitational constant. In the input screen, the elements of this matrix are visualised using colour. Green means a positive force, meaning an attraction, and red means a negative force, or repulsion. You can alter the elements of the matrix by hovering over them with the mouse and then holding the left mousebutton to increase- or the right mousebutton to decrease them. There are also three buttons next to the matrix. The '**+**' button adds a new group, the '**-**' button removes one, and the '**RND**' button randomises the elements of the matrix while keeping it's shape.
 
 Of course there are also more input boxes to toy around with.
-The number of particles determines how many particles will be created overall. It can be any integer greater than zero, though I would not go too crazy since the enire thing runs on the CPU.
+The number of particles determines how many particles will be created overall. It can be any integer greater than zero, though, I would not go too crazy since the entire thing runs on the CPU.
 
 The size determine the radius of each particle in pixels. It can again be any integer greater than zero.
 
