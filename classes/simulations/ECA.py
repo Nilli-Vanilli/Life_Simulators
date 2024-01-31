@@ -41,13 +41,12 @@ class ECA():
         
         
         
-    # update grid
     def update_grid(self, full_grid: np.ndarray):
     
         # consider last row of grid as current generation
         cells = full_grid[-1]
         
-        # store next generation
+        # initialise next generation
         updated_cells = np.zeros(len(cells), dtype=int)
         
         # apply boundary condition
@@ -58,25 +57,21 @@ class ECA():
             case "dirichlet 1": left = right = 1
             case "neumann": left = 0; right = -1
         
-        
-        
         # loop through cells and get neighbourhood
         for i in range(len(cells)):
             
-            if i == 0:
+            if i in range(1, len(cells) - 1):
+                neighbourhood = str(cells[i - 1]) + str(cells[i]) + str(cells[i + 1]) # non-edge cells 
+                    
+            elif i == 0:
                 neighbourhood = str(cells[left]) + str(cells[0]) + str(cells[1])      # left edge
             
-            elif i == len(cells) - 1:
-                neighbourhood = str(cells[-2]) + str(cells[-1]) + str(cells[right])   # right edge
-                
             else:
-                neighbourhood = str(cells[i - 1]) + str(cells[i]) + str(cells[i + 1]) # remaining cells  
+                neighbourhood = str(cells[-2]) + str(cells[-1]) + str(cells[right])   # right edge
                 
             # update state
             updated_cells[i] = self.rule[7 - int(neighbourhood, base=2)]
             
-        
-        
         # update grid
         updated_full_grid = np.delete(full_grid, 0, 0)
         updated_full_grid = np.vstack([updated_full_grid, updated_cells])

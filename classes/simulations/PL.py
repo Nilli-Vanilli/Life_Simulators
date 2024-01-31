@@ -51,7 +51,7 @@ class PL():
     
     
     
-    def __init__(self, window, matrix: np.ndarray, num_particles: int, size: int, fric_hl: float, r_max: float, beta: float, forcefactor: int, dt: float, fps_cap: int) -> None:
+    def __init__(self, window: Window, matrix: np.ndarray, num_particles: int, size: int, fric_hl: float, r_max: float, beta: float, forcefactor: int, dt: float, fps_cap: int) -> None:
 
         self.window = window
         
@@ -70,35 +70,27 @@ class PL():
     def get_neighbours(self, x: float, y: float):
         
         # find all particles in range of the specified position
-        bb = BoundingBox(x - self.r_max, y - self.r_max,
-                         x + self.r_max, y + self.r_max)
-        
-        neighbours = self.tree.within_bb(bb)
+        neighbours = self.tree.within_bb(
+            BoundingBox(x - self.r_max, y - self.r_max, x + self.r_max, y + self.r_max)
+        )
         
         # apply periodic boundary condition
         if x < self.r_max: # left wrap
-            bb = BoundingBox(1 - self.r_max + x, y - self.r_max,
-                             1, y + self.r_max)
-
-            neighbours += self.tree.within_bb(bb)
-        
+            neighbours += self.tree.within_bb(
+                BoundingBox(1 - self.r_max + x, y - self.r_max, 1, y + self.r_max)
+            )
         elif x > 1 - self.r_max: # right wrap
-            bb = BoundingBox(0, y - self.r_max,
-                             self.r_max - 1 + x, y + self.r_max)
-            
-            neighbours += self.tree.within_bb(bb)
-        
+            neighbours += self.tree.within_bb(
+                BoundingBox(0, y - self.r_max, self.r_max - 1 + x, y + self.r_max)
+            )
         if y < self.r_max: # down wrap
-            bb = BoundingBox(x - self.r_max, 1 - self.r_max + y,
-                             x + self.r_max, 1)
-            
-            neighbours += self.tree.within_bb(bb)
-        
+            neighbours += self.tree.within_bb(
+                BoundingBox(x - self.r_max, 1 - self.r_max + y, x + self.r_max, 1)
+            )   
         elif y > 1 - self.r_max: # up wrap
-            bb = BoundingBox(x - self.r_max,0,
-                             x + self.r_max, self.r_max - 1 + y)
-            
-            neighbours += self.tree.within_bb(bb)
+            neighbours += self.tree.within_bb(
+                BoundingBox(x - self.r_max,0, x + self.r_max, self.r_max - 1 + y)
+            )
         
         return neighbours
             

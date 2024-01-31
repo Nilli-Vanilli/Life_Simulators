@@ -8,44 +8,25 @@ from random import randint, choice, uniform
 
 '''threshold / interval functions'''
 
-def logistic_threshold(x: float, x0: float, alpha: float):
-    
+def logistic_threshold(x: float, x0: float, alpha: float):  
     return 1.0 / (1.0 + np.exp(-4.0 / alpha * (x - x0)))
 
-
-
 def hard_threshold(x: float, x0: float):
-
     return np.greater(x, x0)
 
-
-
 def linearized_threshold(x: float, x0: float, alpha: float):
-
     return np.clip((x - x0) / alpha + 0.5, 0, 1)
 
-
-
 def logistic_interval(x: float, a: float, b: float, alpha: float):
-
     return logistic_threshold(x, a, alpha) * (1.0 - logistic_threshold(x, b, alpha))
 
-
-
 def hard_interval(x: float, a: float, b: float):
-    
     return hard_threshold(x, a) * (1 - hard_threshold(x, b))
 
-
-
 def linearized_interval(x: float, a: float, b: float, alpha: float):
-
     return linearized_threshold(x, a, alpha) * (1.0 - linearized_threshold(x, b, alpha))
 
-
-
 def lerp(a: float, b: float, t: float):
-
     return (1.0 - t) * a + t * b
 
 
@@ -56,13 +37,11 @@ def antialiased_circle(size: tuple, radius: float):
     
     y, x = size
     
-    # get coordinates of each cell in the grid
+    # get coordinates of each pixel in the grid
     yy, xx = np.mgrid[:y, :x]
     
-    # get euclidean distance between each cell and the middle cell
+    # get euclidean distance between each pixel and the middle pixel
     radii = np.sqrt((xx - x / 2) ** 2 + (yy - y / 2) ** 2) # use np.sqrt because xx and yy are arrays
-    
-    
     
     # apply logistic function (type of smoothstep to blur circle)
     logres = log(min(*size), 2) # steepness of smoothstep
