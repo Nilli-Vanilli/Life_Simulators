@@ -105,4 +105,3 @@ The following videos inspired a lot of the fundamental ideas and concepts behind
 3) [Particle Life - Tom Mohr](https://www.youtube.com/watch?v=scvuli-zcRc)
 4) [Smooth Life - duckythescientist](https://github.com/duckythescientist/SmoothLife)
 5) [Button - Coding with Russ](https://www.youtube.com/watch?v=jyrP0dDGqgY)
-6) [Text Input - Clear Code](https://www.youtube.com/watch?v=Rvcyf4HsWiw)
