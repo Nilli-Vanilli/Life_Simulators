@@ -37,10 +37,7 @@ class GOL():
     
     
     
-    def update_grid(self, cells: np.ndarray, paused=False):
-        
-        # initialise next generation
-        updated_cells = np.zeros((cells.shape[0], cells.shape[1]), dtype=int)
+    def get_totalistic_sums(self, cells):
         
         # apply boundary condition
         match self.boundary:
@@ -50,33 +47,44 @@ class GOL():
             case "dirichlet 1": padded_cells = np.pad(cells, 1, "constant", constant_values=1)
             case "neumann": padded_cells = np.pad(cells, 1, "edge")
         
-        # get totalistic sum of each cell
-        tot_sums = np.lib.stride_tricks.sliding_window_view(padded_cells, (3, 3)).sum(axis=(2, 3))
-            
-            
+        # get totalistic neighbourhood sum of each cell
+        sums = np.lib.stride_tricks.sliding_window_view(padded_cells, (3, 3)).sum(axis=(2, 3))
         
+        return sums
+    
+    
+    
+    def apply_rules(self, state, tot_sum):
+        
+        # apply rules
+        if state == 1:   # cell is alive
+            if self.rules[0] <= tot_sum <= self.rules[1]: # survival
+                return 1, self.con
+
+            else: return 0, self.coff_next                # death
+        
+        # cell is dead
+        elif tot_sum == self.rules[2]:                   # birth                  
+                return 1, self.con
+        
+        else: return 0, self.coff
+                    
+    
+    def draw_grid(self, cells: np.ndarray, paused):
+        
+        # if not paused, get totalistic neighbourhood sums
+        if not paused:
+            tot_sums = self.get_totalistic_sums(cells)
+            
         # loop through all cells in the grid
         for row, col in np.ndindex(cells.shape):
             
-            # get totalistic sum and determine current colour
-            tot_sum = tot_sums[row, col]
+            # determine current colour
             colour = self.con if cells[row, col] else self.coff
             
-            # apply rules
-            if cells[row, col]:   # cell is alive
-                
-                if self.rules[0] <= tot_sum <= self.rules[1]:                   # survival rule
-                    updated_cells[row, col] = 1
-                    if not paused: colour = self.con
-                
-                elif not paused:                                                    # death rule
-                    colour = self.coff_next      
-            
-            else:    # cell is dead:
-                
-                if tot_sum == self.rules[2]:                                    # birth rule
-                    updated_cells[row, col] = 1
-                    if not paused: colour = self.con
+            # if not paused, calculate new state and colour
+            if not paused:
+                cells[row, col], colour = self.apply_rules(cells[row, col], tot_sums[row, col])
             
             # draw cell
             pg.draw.rect(self.window.screen, colour, (col * self.size,
@@ -84,9 +92,7 @@ class GOL():
                                                       self.size - self.grid_lines,
                                                       self.size - self.grid_lines))
             
-            
-            
-        return updated_cells
+        return cells
     
     
     
@@ -160,17 +166,11 @@ class GOL():
                     try: cells[y // self.size, x // self.size] = 1 if click[0] else 0
                     except: pass # if user clicks off screen
             
-            
-            
             # refresh screen
             self.window.screen.fill(self.cgrid)
+
+            # draw grid and update cells if not paused
+            cells = self.draw_grid(cells, paused)
             
-            # if simulation is paused
-            if paused:
-                self.update_grid(cells, paused=True)               # draw grid but dont compute next generation
-                self.window.update(fps=60)                         # raise fps to get mouse pos more effeciently
-            
-            # if simulation is not paused
-            else:
-                cells = self.update_grid(cells)                    # draw grid and compute next generation
-                self.window.update(self.fps_cap)                   # use user set fps
+            # update screen
+            self.window.update(fps=(60 if paused else self.fps_cap))
