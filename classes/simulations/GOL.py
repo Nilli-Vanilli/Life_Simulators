@@ -68,6 +68,7 @@ class GOL():
                 return 1, self.con
         
         else: return 0, self.coff
+       
                     
     
     def draw_grid(self, cells: np.ndarray, paused):
@@ -79,12 +80,12 @@ class GOL():
         # loop through all cells in the grid
         for row, col in np.ndindex(cells.shape):
             
-            # determine current colour
-            colour = self.con if cells[row, col] else self.coff
+            # if paused, determine current colour
+            if paused:
+                colour = self.con if cells[row, col] else self.coff
             
             # if not paused, calculate new state and colour
-            if not paused:
-                cells[row, col], colour = self.apply_rules(cells[row, col], tot_sums[row, col])
+            else: cells[row, col], colour = self.apply_rules(cells[row, col], tot_sums[row, col])
             
             # draw cell
             pg.draw.rect(self.window.screen, colour, (col * self.size,
