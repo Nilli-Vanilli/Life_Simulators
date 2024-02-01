@@ -50,22 +50,22 @@ class GOL():
             case "dirichlet 1": padded_cells = np.pad(cells, 1, "constant", constant_values=1)
             case "neumann": padded_cells = np.pad(cells, 1, "edge")
         
-        # get neighbourhood of each cell
-        neighbourhoods = np.lib.stride_tricks.sliding_window_view(padded_cells, (3, 3)).sum(axis=(2, 3)) - cells
+        # get totalistic sum of each cell
+        tot_sums = np.lib.stride_tricks.sliding_window_view(padded_cells, (3, 3)).sum(axis=(2, 3))
             
             
         
         # loop through all cells in the grid
         for row, col in np.ndindex(cells.shape):
             
-            # count number of alive neighbours and determine current colour
-            alive_count = neighbourhoods[row, col]
+            # get totalistic sum and determine current colour
+            tot_sum = tot_sums[row, col]
             colour = self.con if cells[row, col] else self.coff
             
             # apply rules
             if cells[row, col]:   # cell is alive
                 
-                if self.rules[0] <= alive_count <= self.rules[1]:                   # survival rule
+                if self.rules[0] <= tot_sum <= self.rules[1]:                   # survival rule
                     updated_cells[row, col] = 1
                     if not paused: colour = self.con
                 
@@ -74,7 +74,7 @@ class GOL():
             
             else:    # cell is dead:
                 
-                if alive_count == self.rules[2]:                                    # birth rule
+                if tot_sum == self.rules[2]:                                    # birth rule
                     updated_cells[row, col] = 1
                     if not paused: colour = self.con
             

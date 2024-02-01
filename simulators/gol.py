@@ -175,7 +175,7 @@ def valid_rule(config: GOL, user_input: str):
         
         if len(rule) != 3 or rule[0] > rule[1]: return False
         
-        if all((val in range(9)) for val in rule):
+        if all((val in range(10)) for val in rule):
         
             config.rules = rule
             config.rule_rnd = False

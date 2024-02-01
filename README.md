@@ -47,7 +47,7 @@ As the simulation is running, it is possible to interact with it in three ways. 
 
 The next cellular automaton is the tremendously famous '[*Game of Life*](https://conwaylife.com/wiki/Conway%27s_Game_of_Life)', designed by John Conway. You should again see seven input boxes you can alter to your heart's content. We will briefly run through them again.
 
-The rule is a tuple this time, containing integers between 0 and 8. The first two digits make up the range of how many live neighbours a cell should have in order to survive. Since it is an interval, the second digit should be greater than- or equal to the first. The last digit says how many live neighbours a cell needs in order for it to be born.
+The rule is a tuple this time, containing integers between 0 and 9. The first two digits make up the interval of how many live neighbours a cell should have in order to survive. Since it is an interval, the second digit should be greater than- or equal to the first. The last digit says how many live neighbours a cell needs in order for it to be born.
 
 The size, boundary condition and colours are the exact same as before. I highly recommend trying out the boundary condition: 'Dirichlet 1', and leaving the grid empty.
 

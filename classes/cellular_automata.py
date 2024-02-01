@@ -16,7 +16,7 @@ class Cellular_Automata:
         
         # Game of Life
         self.gol = GOL(window=window,
-                       rules=(2,3,3),
+                       rules=(3,4,3),
                        size=20,
                        boundary="periodic",
                        fps_cap=10)
